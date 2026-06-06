@@ -1,0 +1,22 @@
+version: "3.8"
+
+networks:
+  # Dùng cùng network name với backend để gọi được service logstash
+  log-monitor-network:
+    name: log-monitor-network
+    driver: bridge
+    external: true # Đánh dấu network đã được tạo sẵn bên ngoài compose này
+
+services:
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:9.2.8
+    container_name: log-monitor-filebeat
+    user: root
+    command: ["--strict.perms=false"]
+    volumes:
+      # Mount cấu hình Filebeat
+      - ./infras/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # Mount thư mục log của app; filebeat.yml sẽ đọc /var/log/logs-app/logs-app.log
+      - ./logs:/var/log/logs-app:ro
+    networks:
+      - log-monitor-network

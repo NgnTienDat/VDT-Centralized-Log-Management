@@ -1,0 +1,27 @@
+{
+  "index_patterns": ["sys-logs-*"],
+  "template": {
+    "settings": {
+      "number_of_shards": 1,
+      "number_of_replicas": 0,
+      "index.lifecycle.name": "logs-ilm-policy",
+      "index.lifecycle.rollover_alias": "sys-logs"
+    },
+    "mappings": {
+      "properties": {
+        "@timestamp":  { "type": "date" },
+        "log_level":   { "type": "keyword" },
+        "trace_id":    { "type": "keyword" },
+        "environment": { "type": "keyword" },
+        "app_name":    { "type": "keyword" },
+        "service_name":{ "type": "keyword" },
+        "host_name":   { "type": "keyword" },
+        "thread":      { "type": "keyword" },
+        "logger":      { "type": "keyword" },
+        "log_message": { "type": "text", "analyzer": "standard" },
+        "message":     { "type": "text" }
+      }
+    }
+  },
+  "priority": 100
+}

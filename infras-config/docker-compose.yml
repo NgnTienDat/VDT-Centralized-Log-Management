@@ -1,0 +1,72 @@
+# =============================================================
+# Ví dụ docker-compose.yml tích hợp sẵn ES init
+# Service "es-init" chạy script một lần rồi tự thoát.
+# Logstash chỉ start SAU KHI es-init hoàn thành thành công.
+# =============================================================
+
+networks:
+  log-monitor-network:
+    name: log-monitor-network
+    driver: bridge
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:9.2.8
+    container_name: log-monitor-elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - log-monitor-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          'curl -s http://localhost:9200/_cluster/health | grep -qE ''"status":"(green|yellow)"''',
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # Service này chạy init-es.sh rồi tự exit — không restart
+  es-init:
+    image: curlimages/curl:latest
+    container_name: log-monitor-es-init
+    depends_on:
+      elasticsearch:
+        condition: service_healthy # chờ ES healthy mới chạy
+    volumes:
+      - ./elasticsearch:/config:ro # mount toàn bộ thư mục elasticsearch/
+    networks:
+      - log-monitor-network
+    # Chạy script init, truyền URL nội bộ của ES trong docker network
+    entrypoint:
+      [
+        "/bin/sh",
+        "/config/config/init-es.sh",
+        "http://log-monitor-elasticsearch:9200",
+      ]
+    restart: "no" # quan trọng: không restart sau khi exit
+
+  logstash:
+    image: docker.elastic.co/logstash/logstash:9.2.8
+    container_name: log-monitor-logstash
+    depends_on:
+      es-init:
+        condition: service_completed_successfully # chờ init xong mới start
+    volumes:
+      - ./logstash:/usr/share/logstash/pipeline:ro
+    environment:
+      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+    networks:
+      - log-monitor-network
+    ports:
+      - "5044:5044"
+
+volumes:
+  es-data:

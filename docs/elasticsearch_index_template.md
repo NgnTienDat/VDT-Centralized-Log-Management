@@ -66,6 +66,10 @@ PUT _index_template/sys-logs-template
           "type": "date"
         },
 
+        "trace_id": {
+          "type": "keyword"
+        },
+
         "environment": {
           "type": "keyword"
         },
