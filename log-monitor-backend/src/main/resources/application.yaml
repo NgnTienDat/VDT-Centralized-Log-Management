@@ -1,0 +1,5 @@
+spring:
+  application:
+    name: log-monitor-backend
+  elasticsearch:
+    uris: http://localhost:9200
