@@ -5,7 +5,7 @@ flowchart TD
     %% LOG PRODUCERS & AGENTS (MULTI-ENV)
     %% =========================
     subgraph SOURCES["📦 Multi-Environment Nodes (Log Sources & Filebeat)"]
-        direction TB
+        direction TB 
          
         subgraph ENV_DEV["Môi trường DEV (Ví dụ)"]
             A1[Auth Service\n- Async Logging] -->|local .log| FB1[Filebeat Agent\n- Tags: env=dev]
@@ -52,7 +52,6 @@ flowchart TD
     %% =========================
     subgraph FRONTEND_LAYER["🖥️ UI & Notification Layer"]
         REACT[Custom Dashboard\nReact/Vue\n- Cho Dev/Tester check nhanh\n- Chọn Môi trường để xem]
-        TG[Telegram Bot / Email\n- Bắn lỗi ngầm ngay lập tức]
     end
 
     %% =========================
@@ -73,7 +72,6 @@ flowchart TD
     REACT --> QUERY
     
     %% Luồng Cảnh báo
-    ALERT --> TG
     ALERT --> WS
     WS --> REACT
 

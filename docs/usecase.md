@@ -1,71 +1,21 @@
-Dưới góc nhìn use case, **Kafka, Redis, Elasticsearch, Logstash** là thành phần nội bộ của hệ thống, không nên xem là actor chính. Actor là các bên bên ngoài tương tác với hệ thống.
+Dưới đây là nội dung đã được chuẩn hóa và cấu trúc lại dưới dạng Markdown, tối ưu hóa cho tài liệu kỹ thuật hoặc báo cáo dự án để bạn dễ dàng theo dõi và bổ sung.
+------------------------------
+## Đề bài dự án: Hệ thống Giám sát dữ liệu Log và Cảnh báo (Log Monitor & Alert System)
+Chương trình: Viettel Digital Talent 2026 — STT: 30
+## 1. Mô tả bài toán
 
-**Các Actors Chính**
+* Mục tiêu: Xây dựng hệ thống thu thập Log tập trung, hỗ trợ tìm kiếm nhanh và phát hiện lỗi/phát tin cảnh báo.
+* Môi trường sử dụng: Chủ yếu phục vụ môi trường Dev/Test (hiện tại dự án đích có 3 - 4 môi trường chạy).
+* Giá trị cốt lõi: Giúp Tester và Dev chủ động kiểm tra hệ thống, cảnh báo sớm các bug tiềm ẩn chạy ngầm bên dưới (mức hệ thống) mà việc test giao diện (UI) thông thường không phát hiện ra.
 
-| Actor | Vai trò |
-|---|---|
-| **Log Producer** | Các hệ thống như Auth, Chat, Payment, Notification gửi log vào hệ thống qua API |
-| **Kỹ sư vận hành / App Engineer** | Theo dõi log realtime, tìm kiếm log, nhận cảnh báo, chỉ xem log thuộc ứng dụng mình quản lý |
-| **System Admin** | Quản trị toàn hệ thống, cấu hình quyền, ứng dụng, ngưỡng cảnh báo, retention policy |
-| **Telegram / Email Gateway** | Nhận yêu cầu gửi cảnh báo từ hệ thống |
+## 2. Yêu cầu chức năng & Công nghệ
 
-**Các Use Case Chính**
+* Log Collector: Thu thập toàn bộ log từ các microservices hiện có gửi về Elasticsearch tập trung.
+* Log Viewer Dashboard: Giao diện hiển thị danh sách log, hỗ trợ bộ lọc theo Level (INFO, WARN, ERROR) hoặc theo Service Name.
+* Alerting: Tự động phát thông báo/cảnh báo khi xuất hiện lượng lớn log dạng ERROR.
+* Tech Stack bắt buộc: Elasticsearch, Logstash, Spring Java.
 
-| Nhóm | Use case |
-|---|---|
-| **Tiếp nhận log** | Gửi log đơn lẻ |
-|  | Gửi batch log |
-|  | Xác thực Producer Service |
-|  | Kiểm tra schema log: `Application_Name`, `Log_Level`, `Message`, `Timestamp`, `Trace_ID` |
-|  | Ghi log thô vào Message Queue |
-|  | Áp dụng rate limiting |
-| **Xử lý log** | Consume log thô từ Message Queue |
-|  | Parse và chuẩn hóa log |
-|  | Gắn trạng thái xử lý: Raw, Normalized, Stored |
-|  | Lưu log vào Elasticsearch / DB |
-|  | Phát hiện log `ERROR` hoặc `CRITICAL` |
-|  | Đẩy event lỗi vào hàng đợi cảnh báo ưu tiên |
-| **Cảnh báo** | Consume alert event |
-|  | Kiểm tra trùng cảnh báo bằng Redis |
-|  | Tạo khóa deduplication theo app, level, message hoặc fingerprint |
-|  | Gửi cảnh báo realtime qua WebSocket |
-|  | Gửi cảnh báo Telegram |
-|  | Gửi cảnh báo Email |
-| **Giám sát realtime** | Xem live stream log |
-|  | Lọc log theo application |
-|  | Lọc log theo level |
-|  | Xem chi tiết log theo `Trace_ID` |
-|  | Tìm kiếm log theo từ khóa |
-| **Phân quyền** | Đăng nhập |
-|  | Phân quyền theo vai trò Admin / Engineer |
-|  | Giới hạn Engineer chỉ xem log của ứng dụng được cấp quyền |
-|  | Admin cấu hình quyền truy cập ứng dụng |
-| **Quản trị hệ thống** | Admin cấu hình danh sách application |
-|  | Admin cấu hình ngưỡng cảnh báo |
-|  | Admin cấu hình retention policy |
-|  | Admin theo dõi trạng thái ingestion / processing |
-| **Báo cáo & phân tích** | Thống kê số lượng log theo thời gian |
-|  | Thống kê tỷ lệ lỗi theo application |
-|  | Vẽ biểu đồ health analytics theo giờ |
-|  | Xác định ứng dụng có tỷ lệ lỗi cao |
-| **Bảo trì dữ liệu** | Tự động xóa log `INFO` quá 7 ngày |
-|  | Nén hoặc archive log cũ |
-|  | Quản lý vòng đời index |
-| **Demo / kiểm thử tải** | Giả lập gửi 500 log trong 2 giây |
-|  | Kiểm tra hệ thống tiếp nhận không lỗi |
-|  | Kiểm tra dashboard hiển thị log realtime mượt |
+## 3. Tiêu chí đầu ra (Deliverables)
 
-Có thể gom lại thành các use case lõi nhất cho sơ đồ Use Case:
-
-1. **Submit Logs**
-2. **Process and Normalize Logs**
-3. **Store Logs**
-4. **Detect Critical Logs**
-5. **Deduplicate Alerts**
-6. **Send Notifications**
-7. **View Realtime Logs**
-8. **Search and Filter Logs**
-9. **Manage Access Control**
-10. **Configure Alert Rules**
-11. **View Health Analytics**
-12. **Run Log Retention Job**
+* Hệ thống chạy được: Đúng tài liệu giải pháp, đảm bảo hiệu năng và sẵn sàng đóng gói để deploy lên Production.
+* Tài liệu đi kèm: Tài liệu kiến trúc/giải pháp hệ thống (Architecture/Solution Document) và Hướng dẫn cài đặt, triển khai (Deployment Guide).
