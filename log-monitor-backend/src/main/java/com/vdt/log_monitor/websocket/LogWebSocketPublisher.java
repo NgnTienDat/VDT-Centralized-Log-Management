@@ -39,8 +39,10 @@ public class LogWebSocketPublisher {
 
         // Chuẩn hóa để tránh NullPointerException khi build topic string
         String env   = normalize(log.getEnvironment());
-        String service = normalize(log.getService());
-        String level = normalize(log.getLevel());
+        String service = normalize(log.getServiceName());
+        String level = normalize(log.getLogLevel().name());
+
+        System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level);
 
         // 1. Topic cụ thể nhất — client filter đúng env + level
         //    VD: /topic/logs.dev.error
@@ -62,7 +64,7 @@ public class LogWebSocketPublisher {
     private void sendToTopic(String topic, LogMessageDto logMessageDto) {
         try {
             messagingTemplate.convertAndSend(topic, logMessageDto);
-            log.debug("Published log [{}] [{}] to {}", logMessageDto.getLevel(), logMessageDto.getService(), topic);
+            log.debug("Published log [{}] [{}] to {}", logMessageDto.getLogLevel(), logMessageDto.getServiceName(), topic);
 
         } catch (Exception e) {
             // Không để lỗi WS làm crash luồng ingest chính

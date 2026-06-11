@@ -1,6 +1,6 @@
 package com.vdt.log_monitor.common.entity;
 
-
+import com.vdt.log_monitor.common.enums.LogLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,29 +36,34 @@ public class LogDocument {
     @Field(name = "environment", type = FieldType.Keyword)
     private String environment;
 
-    @Field(name = "app_name", type = FieldType.Keyword)
+    @Field(name = "app", type = FieldType.Keyword)
     private String appName;
 
-    // Tên dịch vụ (nếu app_name chưa đủ hoặc muốn phân tách rõ theo chuẩn microservices)
-    @Field(name = "service_name", type = FieldType.Keyword)
+    // Tên dịch vụ (nếu app_name chưa đủ hoặc muốn phân tách rõ theo chuẩn
+    // microservices)
+    @Field(name = "service", type = FieldType.Keyword)
     private String serviceName;
 
-    // Trace ID dùng để bắt cặp toàn bộ hành trình của 1 request qua các microservices
+    // Trace ID dùng để bắt cặp toàn bộ hành trình của 1 request qua các
+    // microservices
     @Field(name = "trace_id", type = FieldType.Keyword)
     private String traceId;
 
     @Field(name = "host_name", type = FieldType.Keyword)
     private String hostName;
 
-    @Field(name = "log_level", type = FieldType.Keyword)
-    private String logLevel;
+    @Field(name = "level", type = FieldType.Keyword)
+    private LogLevel logLevel;
 
     @Field(name = "logger", type = FieldType.Keyword)
-    private String logger;
+    private String logger; // Tên logger (ví dụ: com.vdt.auth.AuthService)
 
     @Field(name = "thread", type = FieldType.Keyword)
     private String thread;
 
-    @Field(name = "log_message", type = FieldType.Text, analyzer = "standard")
+    @Field(name = "main_message", type = FieldType.Text, analyzer = "standard")
     private String logMessage;
+
+    @Field(name = "stack_trace", type = FieldType.Text, analyzer = "standard")
+    private String stackTrace;
 }

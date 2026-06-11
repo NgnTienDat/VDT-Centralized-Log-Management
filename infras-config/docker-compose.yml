@@ -67,6 +67,8 @@ services:
       - log-monitor-network
     ports:
       - "5044:5044"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
 volumes:
   es-data:

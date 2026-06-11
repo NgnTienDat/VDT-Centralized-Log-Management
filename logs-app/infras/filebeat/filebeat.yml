@@ -22,8 +22,8 @@ processors:
       target: ''
       fields:
         environment: 'dev'
-        app_name: 'logs-app'
-        service_name: 'logs-service'
+        app: 'logs-app'
+        service: 'logs-service'
 
 # Đích đến: Logstash chạy trong cùng docker network
 output.logstash:

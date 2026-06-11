@@ -1,5 +1,7 @@
 {
-  "index_patterns": ["sys-logs-*"],
+  "index_patterns": [
+    "sys-logs-*"
+  ],
   "template": {
     "settings": {
       "number_of_shards": 1,
@@ -9,17 +11,41 @@
     },
     "mappings": {
       "properties": {
-        "@timestamp":  { "type": "date" },
-        "log_level":   { "type": "keyword" },
-        "trace_id":    { "type": "keyword" },
-        "environment": { "type": "keyword" },
-        "app_name":    { "type": "keyword" },
-        "service_name":{ "type": "keyword" },
-        "host_name":   { "type": "keyword" },
-        "thread":      { "type": "keyword" },
-        "logger":      { "type": "keyword" },
-        "log_message": { "type": "text", "analyzer": "standard" },
-        "message":     { "type": "text" }
+        "@timestamp": {
+          "type": "date"
+        },
+        "level": {
+          "type": "keyword"
+        },
+        "trace_id": {
+          "type": "keyword"
+        },
+        "environment": {
+          "type": "keyword"
+        },
+        "app": {
+          "type": "keyword"
+        },
+        "service": {
+          "type": "keyword"
+        },
+        "host_name": {
+          "type": "keyword"
+        },
+        "thread": {
+          "type": "keyword"
+        },
+        "logger": {
+          "type": "keyword"
+        },
+        "message": {
+          "type": "text",
+          "analyzer": "standard"
+        },
+        "stack_trace": {
+          "type": "text",
+          "analyzer": "standard"
+        }
       }
     }
   },

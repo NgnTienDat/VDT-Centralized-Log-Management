@@ -15,23 +15,23 @@ import org.springframework.stereotype.Service;
  *
  * Tại sao dùng ApplicationEvent thay vì gọi trực tiếp?
  *
- *   Nếu gọi thẳng:
- *     collector → websocket (import trực tiếp) — vi phạm feature boundary
- *     collector → alert     (import trực tiếp) — vi phạm feature boundary
+ * Nếu gọi thẳng:
+ * collector → websocket (import trực tiếp) — vi phạm feature boundary
+ * collector → alert (import trực tiếp) — vi phạm feature boundary
  *
- *   Dùng event:
- *     collector → publish(LogIngestedEvent)    — chỉ biết common/dto
- *     websocket ← @EventListener               — tự subscribe
- *     alert     ← @EventListener               — tự subscribe
+ * Dùng event:
+ * collector → publish(LogIngestedEvent) — chỉ biết common/dto
+ * websocket ← @EventListener — tự subscribe
+ * alert ← @EventListener — tự subscribe
  *
- *                     ┌─────────────────────┐
- *   LogCollectorService │  publishEvent(dto)  │
- *                     └──────────┬──────────┘
- *                                │  Spring Event Bus
- *                    ┌───────────┴────────────┐
- *                    ▼                        ▼
- *        LogWebSocketPublisher          AlertEvaluator
- *        (broadcast STOMP)              (check rule engine)
+ * ┌─────────────────────┐
+ * LogCollectorService │ publishEvent(dto) │
+ * └──────────┬──────────┘
+ * │ Spring Event Bus
+ * ┌───────────┴────────────┐
+ * ▼ ▼
+ * LogWebSocketPublisher AlertEvaluator
+ * (broadcast STOMP) (check rule engine)
  */
 @Slf4j
 @Service
@@ -42,7 +42,7 @@ public class LogCollectorService {
 
     /**
      * @Async: chạy trên thread pool riêng. Controller trả 202 ngay,
-     * không chờ method này — không block HTTP thread của Logstash.
+     *         không chờ method này — không block HTTP thread của Logstash.
      */
     @Async
     public void ingest(LogIngestRequest request) {
@@ -50,12 +50,12 @@ public class LogCollectorService {
             LogMessageDto dto = mapToDto(request);
 
             // Publish — tất cả @EventListener với LogIngestedEvent sẽ được gọi:
-            //   LogWebSocketPublisher.onLogIngested()  → broadcast STOMP
-            //   AlertEvaluator.onLogIngested()         → check alert rule
+            // LogWebSocketPublisher.onLogIngested() → broadcast STOMP
+            // AlertEvaluator.onLogIngested() → check alert rule
             eventPublisher.publishEvent(new LogIngestedEvent(this, dto));
 
             log.debug("Event published — traceId: {}, level: {}, service: {}",
-                    dto.getTraceId(), dto.getLevel(), dto.getService());
+                    dto.getTraceId(), dto.getLogLevel(), dto.getServiceName());
 
         } catch (Exception e) {
             log.error("Failed to process ingested log — traceId: {}, error: {}",
@@ -66,15 +66,17 @@ public class LogCollectorService {
     private LogMessageDto mapToDto(LogIngestRequest req) {
         return LogMessageDto.builder()
                 .traceId(req.getTraceId())
-                .level(req.getLevel())
+                .logLevel(req.getLogLevel())
                 .environment(normalizeEnv(req.getEnvironment()))
-                .service(req.getService())
+                .serviceName(req.getServiceName())
                 .thread(req.getThread())
-                .message(req.getMessage())
-                .timestamp(req.getTimestamp())
+                .logMessage(req.getMessage())
+                .eventTimestamp(req.getEventTimestamp())
+                .hostName(req.getHostName())
+                .logger(req.getLogger())
+                .stackTrace(req.getStackTrace())
                 .build();
     }
-
 
     private String normalizeEnv(String env) {
         return env != null ? env.toLowerCase().trim() : "unknown";

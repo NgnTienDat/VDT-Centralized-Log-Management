@@ -17,9 +17,9 @@ import org.springframework.web.bind.annotation.*;
  * Production: giới hạn bằng firewall rule hoặc Spring Security IP whitelist.
  *
  * Flow sau khi nhận request:
- *   Controller (validate) → Service (map + publish event) → [Event Bus]
- *       → LogWebSocketPublisher (broadcast STOMP)
- *       → AlertEvaluator (check rule engine)
+ * Controller (validate) → Service (map + publish event) → [Event Bus]
+ * → LogWebSocketPublisher (broadcast STOMP)
+ * → AlertEvaluator (check rule engine)
  */
 @Slf4j
 @RestController
@@ -40,10 +40,14 @@ public class LogCollectorController {
      */
     @PostMapping("/ingest")
     public ResponseEntity<Void> ingest(@RequestBody @Valid LogIngestRequest request) {
-        log.debug("Received log — service: {}, level: {}, traceId: {}",
-                request.getService(), request.getLevel(), request.getTraceId());
-
-        logCollectorService.ingest(request);
+        if (request.getLogLevel().name().equalsIgnoreCase("WARN")) {
+            log.warn("Received log — service: {}, level: {}, traceId: {}",
+                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
+        } else if (request.getLogLevel().name().equalsIgnoreCase("ERROR")) {
+            log.error("Received log — service: {}, level: {}, traceId: {}",
+                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
+        }
+        // logCollectorService.ingest(request);
 
         // 202 Accepted: đã nhận, đang xử lý async
         // Không dùng 200 OK vì chưa xử lý xong tại thời điểm response
