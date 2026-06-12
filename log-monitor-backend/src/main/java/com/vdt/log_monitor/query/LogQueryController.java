@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/logs")
 @RequiredArgsConstructor
 @Validated
+@CrossOrigin(origins = "*")
 public class LogQueryController {
 
     private final LogQueryService logQueryService;

@@ -44,8 +44,8 @@ public class LogWebSocketPublisher {
 
         System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level);
 
-        // 1. Topic cụ thể nhất — client filter đúng env + level
-        //    VD: /topic/logs.dev.error
+        // 1. Topic cụ thể nhất — client filter đúng env + service + level
+        //    VD: /topic/logs.dev.logs-service.error
         String specificTopic = buildTopic(env, service, level);
         sendToTopic(specificTopic, log);
 

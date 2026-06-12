@@ -1,5 +1,6 @@
 package com.vdt.log_monitor.query;
 
+import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 
 import com.vdt.log_monitor.common.dto.CursorPage;
@@ -68,17 +69,20 @@ public class LogQueryService {
         // Chỉ kích hoạt search_after từ trang 2 trở đi khi có ĐỦ cả timestamp và ID tie-break
         if (request.getBefore() != null && StringUtils.hasText(request.getBeforeId())) {
             searchAfter = List.of(
-                    request.getBefore().toEpochMilli(), // Khớp với @timestamp trong ES
-                    request.getBeforeId()               // Khớp với _shard_doc tie-breaker
+                    request.getBefore().toEpochMilli(),
+                    request.getBeforeId()   // beforeId giờ là docId (keyword), không phải _shard_doc
             );
         }
 
+        // Sort đúng: @timestamp DESC + doc_id DESC (field thường, có doc_values)
         NativeQuery query = NativeQuery.builder()
                 .withQuery(q -> q.bool(boolQueryBuilder.build()))
-                // Sort 2 trường: @timestamp DESC + _doc DESC làm tie-breaker
-                // Không dùng _id vì ES không bật doc_values cho _id → all shards failed
-                .withSort(Sort.by(Sort.Direction.DESC, "@timestamp")
-                        .and(Sort.by(Sort.Direction.DESC, "_doc")))
+                .withSort(s -> s.field(f -> f
+                        .field("@timestamp")
+                        .order(SortOrder.Desc)))
+                .withSort(s -> s.field(f -> f
+                        .field("doc_id")
+                        .order(SortOrder.Desc)))
                 .withSearchAfter(searchAfter)
                 .withPageable(PageRequest.of(0, limit + 1))
                 .build();
@@ -94,8 +98,9 @@ public class LogQueryService {
 
         Instant nextCursorTs = data.isEmpty() ? null
                 : data.get(data.size() - 1).getEventTimestamp();
+
         String nextCursorId = data.isEmpty() ? null
-                : data.get(data.size() - 1).getId();
+                : data.get(data.size() - 1).getDocId();
 
         return CursorPage.<LogDocument>builder()
                 .data(data)

@@ -47,7 +47,7 @@ public class LogCollectorController {
             log.error("Received log — service: {}, level: {}, traceId: {}",
                     request.getServiceName(), request.getLogLevel(), request.getTraceId());
         }
-        // logCollectorService.ingest(request);
+         logCollectorService.ingest(request);
 
         // 202 Accepted: đã nhận, đang xử lý async
         // Không dùng 200 OK vì chưa xử lý xong tại thời điểm response

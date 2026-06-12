@@ -27,6 +27,9 @@ public class LogDocument {
     @Id
     private String id;
 
+    @Field(name = "doc_id", type = FieldType.Keyword)
+    private String docId;
+
     @Field(name = "@timestamp", type = FieldType.Date, format = DateFormat.date_optional_time)
     private Instant eventTimestamp;
 

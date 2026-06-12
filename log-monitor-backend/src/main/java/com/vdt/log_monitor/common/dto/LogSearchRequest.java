@@ -19,11 +19,6 @@ public class LogSearchRequest {
     LogLevel logLevel;
     String q; // keyword for full-text search in log message content
 
-    // @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    // Instant from;
-
-    // @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-    // Instant to;
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
     Instant before;
     String beforeId;
