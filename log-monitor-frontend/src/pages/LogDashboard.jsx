@@ -116,16 +116,11 @@ export default function LogDashboard() {
                 <StatsRow stats={stats} errorHistory={errorHistory} isDark={isDark} />
 
                 <FilterBar
-                    search={q || ""}
-                    onSearch={setQ}
-                    filterLevel={logLevel || "ALL"}
-                    onLevel={setLogLevel}
-                    filterEnv={environment || "ALL"}
-                    onEnv={setEnvironment}
-                    filterService={serviceName || "ALL"}
-                    onService={setServiceName}
-                    filteredCount={logs.length}
-                    totalCount={logs.length}
+                    search={q || ""} onSearch={setQ}
+                    filterLevel={logLevel || "ALL"} onLevel={setLogLevel}
+                    filterEnv={environment || "ALL"} onEnv={setEnvironment}
+                    filterService={serviceName || "ALL"} onService={setServiceName}
+                    filteredCount={logs.length} totalCount={logs.length}
                     isDark={isDark}
                 />
 

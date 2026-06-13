@@ -73,6 +73,7 @@ export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
     // Tức là response ở đây là CursorPage { data, hasMore, nextCursor, nextCursorId }
     const response = await axiosClient.get(`/api/v1/logs?${params}`);
     // console.log("Fetched logs:", response.data);
+    console.log("it works");
     return response.data; // response.data là CursorPage
 }
 
