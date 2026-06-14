@@ -43,7 +43,7 @@
 //}
 
 
-package com.dev.logsapp;
+package com.staging.logsapp;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -55,38 +55,34 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/test")
 @Slf4j
 public class TestController {
-
     @GetMapping("/info")
     public ResponseEntity<String> getLogInfo() {
-        log.info("Scheduled report generated successfully for sales department");
+        log.info("User #88421 updated profile successfully, 3 fields changed");
         return ResponseEntity.ok("INFO log generated");
     }
 
     @GetMapping("/error")
     public ResponseEntity<String> getLogError() {
-        log.error(
-                "Failed to synchronize inventory data with external warehouse service",
-                new RuntimeException("External API unavailable")
-        );
+        log.error("Payment processing failed for order #12345: insufficient funds", new RuntimeException("Payment gateway timeout"));
         return ResponseEntity.ok("ERROR log generated");
     }
 
     @GetMapping("/debug")
     public ResponseEntity<String> getLogDebug() {
-        log.debug("Cache refresh process started for product catalog, batch size=500");
+        log.debug("Debugging user login flow: step 1 completed, session ID: abc123xyz");
         return ResponseEntity.ok("DEBUG log generated");
     }
 
     @GetMapping("/warn")
     public ResponseEntity<String> getLogWarn() {
-        log.warn("Memory usage exceeded warning threshold: current usage 82%");
+        log.warn("Disk space running low on server 'db-server-01': only 5% remaining");
         return ResponseEntity.ok("WARN log generated");
     }
 
     @GetMapping("/all")
     public ResponseEntity<String> getLogAll() {
-        log.info("New customer account registered with email verification completed");
-        log.error("Message queue consumer failed to process event after 3 retry attempts");
+        log.info("User #88421 created a new order #56789 with 2 items in cart");
+        log.error("Database connection pool exhausted — all 20 connections in use, request queued");
         return ResponseEntity.ok("All log levels generated");
     }
 }

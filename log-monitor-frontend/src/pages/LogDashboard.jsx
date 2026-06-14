@@ -10,6 +10,7 @@ import LogTableSkeleton from "../components/log/LogTableSkeleton.jsx";
 import LogDetail from "../components/log/LogDetail.jsx";
 import StatsRow from "../components/stats/StatsRow.jsx";
 import { useLogQuery } from "../hooks/useLogQuery.js";
+import { useLogStream } from "../hooks/useLogStream.js";
 import { useFilterStore } from "../stores/useFilterStore.js";
 
 export default function LogDashboard() {
@@ -39,14 +40,15 @@ export default function LogDashboard() {
     const {
         logs,
         isLoading,
+        isFetching,
         isError,
         error,
         isFetchingNextPage,
         hasNextPage,
         fetchNextPage
-    } = useLogQuery({
-        refetchInterval: liveMode ? 3000 : false,
-    });
+    } = useLogQuery();
+
+    useLogStream(liveMode, isFetching);
 
     // Compute stats from dynamically fetched logs
     const stats = {

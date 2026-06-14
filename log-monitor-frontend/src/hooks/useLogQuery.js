@@ -69,11 +69,11 @@ export function useLogQuery(options = {}) {
 
     const mappedLogs = rawLogs.map((item) => ({
         id: item.id,
-        timestamp: item.eventTimestamp,
-        level: item.logLevel?.toUpperCase() || "INFO",
-        env: item.environment?.toUpperCase() || "DEV",
-        service: item.serviceName,
-        message: item.logMessage,
+        timestamp: item.eventTimestamp || item.timestamp,
+        level: (item.logLevel || item.level)?.toUpperCase() || "INFO",
+        env: (item.environment || item.env)?.toUpperCase() || "DEV",
+        service: item.serviceName || item.service,
+        message: item.logMessage || item.message,
         thread: item.thread,
         traceId: item.traceId,
         appName: item.appName,
@@ -85,6 +85,7 @@ export function useLogQuery(options = {}) {
     return {
         logs: mappedLogs,                              // array phẳng để render
         isLoading: query.isLoading,  // true chỉ lần fetch đầu tiên
+        isFetching: query.isFetching,                  // true khi đang fetch hoặc refetch
         isError: query.isError,
         error: query.error,
         isFetchingNextPage: query.isFetchingNextPage, // true khi đang load more

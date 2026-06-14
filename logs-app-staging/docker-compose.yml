@@ -1,0 +1,61 @@
+version: "3.8"
+
+networks:
+  # Dùng cùng network name với backend để gọi được service logstash
+  log-monitor-network:
+    name: log-monitor-network
+    driver: bridge
+    external: true # Đánh dấu network đã được tạo sẵn bên ngoài compose này
+
+services:
+  # -----------------------------------------------
+  # Spring Boot app — sinh ra file log tại ./logs/
+  # -----------------------------------------------
+  logs-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: logs-app-staging
+    restart: unless-stopped
+    ports:
+      - "8081:8081"
+    environment:
+      # Đường dẫn log bên trong container; phải khớp với logback-spring.xml
+      - LOGS_DIR=/app/logs
+      - SPRING_PROFILES_ACTIVE=staging
+    volumes:
+      # Chia sẻ thư mục log với Filebeat
+      # Host: ./logs  <->  Container: /app/logs
+      - ./logs:/app/logs
+    networks:
+      - log-monitor-network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://localhost:8081/actuator/health || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # -----------------------------------------------
+  # Filebeat — đọc log từ ./logs/ và đẩy vào Logstash
+  # -----------------------------------------------
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:9.2.8
+    container_name: filebeat-staging
+    user: root
+    command: ["--strict.perms=false"]
+    restart: unless-stopped
+    depends_on:
+      logs-app:
+        condition: service_healthy
+    volumes:
+      # Mount cấu hình Filebeat
+      - ./infras/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      # Mount thư mục log của app; filebeat.yml sẽ đọc /var/log/logs-app/logs-app.log
+      - ./logs:/var/log/logs-app:ro
+    networks:
+      - log-monitor-network

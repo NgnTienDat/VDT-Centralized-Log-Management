@@ -1,0 +1,5 @@
+server:
+  port: 8081
+logging:
+  file:
+    name: ./logs/logs-app.log
