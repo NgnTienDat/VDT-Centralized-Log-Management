@@ -17,10 +17,7 @@ export default function LogDashboard() {
     const [isDark, setIsDark] = useState(true);
     const [selectedLog, setSelectedLog] = useState(null);
     const [liveMode, setLiveMode] = useState(false);
-    const [alerts, setAlerts] = useState([
-        { env: "DEV", message: "5 ERROR logs from auth-service in the last 60s — possible auth loop", time: "08:01:14" },
-        { env: "STAGING", message: "SMTP connection refused — notification-service cannot send emails", time: "08:01:17" },
-    ]);
+    const [alerts, setAlerts] = useState([]);
     const [errorHistory] = useState([0, 1, 0, 2, 1, 3, 0, 1, 2, 4, 3, 5, 2, 1, 3, 4, 2, 5, 6, 4]);
 
     const seenLogIds = useRef(new Set());

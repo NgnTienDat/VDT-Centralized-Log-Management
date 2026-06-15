@@ -153,3 +153,5 @@ java.lang.RuntimeException: Payment gateway timeout
 	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
 	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
 	at java.base/java.lang.Thread.run(Unknown Source)
+2026-06-15 15:34:26.658 [SpringApplicationShutdownHook] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
+2026-06-15 15:34:26.708 [tomcat-shutdown] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete

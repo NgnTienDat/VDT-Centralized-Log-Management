@@ -9,10 +9,13 @@ import com.vdt.log_monitor.common.entity.LogDocument;
 
 import java.time.Instant;
 
+import com.vdt.log_monitor.common.exception.AppException;
+import com.vdt.log_monitor.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.elasticsearch.ResourceNotFoundException;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
@@ -108,5 +111,19 @@ public class LogQueryService {
                 .nextCursor(nextCursorTs)
                 .nextCursorId(nextCursorId)
                 .build();
+    }
+
+    public LogDocument findById(String id) {
+        return logSearchRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND));
+    }
+
+    /**
+     * Fetch by the doc_id keyword field.
+     * Throws ResourceNotFoundException (→ 404) when not found.
+     */
+    public LogDocument findByDocId(String docId) {
+        return logSearchRepository.findByDocId(docId)
+                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND));
     }
 }
