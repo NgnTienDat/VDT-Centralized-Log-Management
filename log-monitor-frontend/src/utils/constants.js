@@ -7,6 +7,7 @@ export const SERVICES = [
   "user-service",
   "payment-service",
   "notification-service",
+  "logs-service",
 ];
 
 export const MOCK_LOGS = [

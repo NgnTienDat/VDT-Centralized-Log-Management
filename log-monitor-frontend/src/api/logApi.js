@@ -59,7 +59,7 @@ function buildParams(raw) {
  */
 export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
     const params = buildParams({
-        environment: filters.environment,
+        environment: filters.environment?.toLocaleLowerCase(),
         appName: filters.appName,
         serviceName: filters.serviceName,
         logLevel: filters.logLevel,
@@ -71,6 +71,7 @@ export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
 
     // axiosClient interceptor đã unwrap ApiResponse → nhận thẳng phần `data`
     // Tức là response ở đây là CursorPage { data, hasMore, nextCursor, nextCursorId }
+    console.log("Fetching logs with params:", params.toString());
     const response = await axiosClient.get(`/api/v1/logs?${params}`);
     // console.log("Fetched logs:", response.data);
     console.log("it works");

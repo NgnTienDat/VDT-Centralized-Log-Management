@@ -44,7 +44,7 @@ export default function LogTable({
                     <>
                         {logs.map((log) => (
                             <LogRow
-                                key={log.id}
+                                key={log.docId || log.id}
                                 log={log}
                                 onClick={onSelectLog}
                                 selected={selectedLog?.id === log.id}

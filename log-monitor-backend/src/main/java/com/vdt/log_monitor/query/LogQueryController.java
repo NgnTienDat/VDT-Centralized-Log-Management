@@ -25,7 +25,9 @@ public class LogQueryController {
      */
     @GetMapping
     public ApiResponse<CursorPage<LogDocument>> searchLogs(@Valid LogSearchRequest logSearchRequest) {
+//        System.out.println("Search request: " + logSearchRequest);
         CursorPage<LogDocument> results = logQueryService.search(logSearchRequest);
+//        System.out.println("Search results: " + results);
         return ApiResponse.success(results);
     }
 }

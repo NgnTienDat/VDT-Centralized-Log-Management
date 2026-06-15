@@ -39,7 +39,7 @@ public class LogQueryService {
 
         if (StringUtils.hasText(request.getEnvironment())) {
             boolQueryBuilder.filter(f -> f.term(t -> t
-                    .field("environment").value(request.getEnvironment())));
+                    .field("environment").value(request.getEnvironment().toLowerCase())));
         }
         if (StringUtils.hasText(request.getAppName())) {
             boolQueryBuilder.filter(f -> f.term(t -> t

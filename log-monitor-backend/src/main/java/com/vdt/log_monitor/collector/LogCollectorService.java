@@ -53,9 +53,9 @@ public class LogCollectorService {
             // LogWebSocketPublisher.onLogIngested() → broadcast STOMP
             // AlertEvaluator.onLogIngested() → check alert rule
             eventPublisher.publishEvent(new LogIngestedEvent(this, dto));
-
-            log.debug("Event published — traceId: {}, level: {}, service: {}",
-                    dto.getTraceId(), dto.getLogLevel(), dto.getServiceName());
+            log.info("DTO doc ID: {}", dto.getDocId());
+//            log.debug("Event published — traceId: {}, level: {}, service: {}",
+//                    dto.getTraceId(), dto.getLogLevel(), dto.getServiceName());
 
         } catch (Exception e) {
             log.error("Failed to process ingested log — traceId: {}, error: {}",
@@ -65,6 +65,7 @@ public class LogCollectorService {
 
     private LogMessageDto mapToDto(LogIngestRequest req) {
         return LogMessageDto.builder()
+                .docId(req.getDocId())
                 .traceId(req.getTraceId())
                 .logLevel(req.getLogLevel())
                 .environment(normalizeEnv(req.getEnvironment()))

@@ -44,12 +44,16 @@ public class LogWebSocketPublisher {
         String service = normalize(log.getServiceName());
         String level = normalize(log.getLogLevel().name());
 
-        System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level);
+        System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level + ", ID: " + log.getDocId());
+        System.out.println("New Log:" + log);
 
         // 1. Topic cụ thể nhất — client filter đúng env + service + level
         // VD: /topic/logs.dev.logs-service.error
         String specificTopic = buildTopic(env, service, level);
         sendToTopic(specificTopic, log);
+
+//        String testTopic = buildTopic(env, "all", level);
+//        sendToTopic(testTopic, log);
 
         // 2. Topic theo env, tất cả level
         // VD: /topic/logs.dev.all

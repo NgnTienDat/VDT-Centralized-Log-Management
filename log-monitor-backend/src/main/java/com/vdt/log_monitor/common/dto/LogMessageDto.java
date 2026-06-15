@@ -22,6 +22,7 @@ import java.time.Instant;
 public class LogMessageDto {
 
     private String id;           // ES document _id — dùng để gọi GET /api/logs/{id}
+    private String docId;        // doc_id gốc từ Logstash, có thể dùng để tra cứu log trong ES nếu cần
     private Instant eventTimestamp;
     private LogLevel logLevel;        // ERROR | WARN | INFO | DEBUG
     private String environment;  // dev | staging | test | prod

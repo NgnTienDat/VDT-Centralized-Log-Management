@@ -9,6 +9,7 @@ import java.time.Instant;
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true) // bỏ qua các field không có trong class
 public class LogIngestRequest {
+    private String docId;
     private String traceId;
     private LogLevel logLevel;
     private String environment;

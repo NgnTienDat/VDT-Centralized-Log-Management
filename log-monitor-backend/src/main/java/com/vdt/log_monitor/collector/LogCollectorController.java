@@ -40,13 +40,13 @@ public class LogCollectorController {
      */
     @PostMapping("/ingest")
     public ResponseEntity<Void> ingest(@RequestBody @Valid LogIngestRequest request) {
-        if (request.getLogLevel().name().equalsIgnoreCase("WARN")) {
-            log.warn("Received log — service: {}, level: {}, traceId: {}",
-                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
-        } else if (request.getLogLevel().name().equalsIgnoreCase("ERROR")) {
-            log.error("Received log — service: {}, level: {}, traceId: {}",
-                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
-        }
+//        if (request.getLogLevel().name().equalsIgnoreCase("WARN")) {
+//            log.warn("Received log — service: {}, level: {}, traceId: {}",
+//                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
+//        } else if (request.getLogLevel().name().equalsIgnoreCase("ERROR")) {
+//            log.error("Received log — service: {}, level: {}, traceId: {}",
+//                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
+//        }
          logCollectorService.ingest(request);
 
         // 202 Accepted: đã nhận, đang xử lý async

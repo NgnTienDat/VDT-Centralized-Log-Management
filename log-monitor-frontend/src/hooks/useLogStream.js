@@ -67,8 +67,9 @@ export function useLogStream(liveMode, isFetching) {
 
                         if (envMatch && levelMatch && serviceMatch && appMatch && qMatch) {
                             // 4. Data Structuring & Mapping
+                            // Thay vì lấy rawLog.id luôn bị null, ưu tiên lấy rawLog.docId từ Logstash
                             const mappedLog = {
-                                id: rawLog.id,
+                                id: rawLog.docId || rawLog.id,
                                 timestamp: rawLog.eventTimestamp,
                                 level: rawLog.logLevel?.toUpperCase() || "INFO",
                                 env: rawLog.environment?.toUpperCase() || "DEV",
@@ -88,7 +89,7 @@ export function useLogStream(liveMode, isFetching) {
                                 (oldData) => {
                                     if (!oldData) return oldData;
 
-                                    // Prevent duplicates
+                                    // Prevent duplicates (Sử dụng mappedLog.id mới cập nhật để check trùng)
                                     const isDuplicate = oldData.pages.some((page) =>
                                         page?.data?.some((item) => item.id === mappedLog.id)
                                     );

@@ -1,85 +1,155 @@
-2026-06-14 16:08:16.057 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
-2026-06-14 16:08:16.064 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "docker"
-2026-06-14 16:08:19.116 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-14 16:08:19.174 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:08:19.183 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-14 16:08:19.186 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-06-14 16:08:19.356 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 3161 ms
-2026-06-14 16:08:21.563 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
-2026-06-14 16:08:21.684 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:08:21.762 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
-2026-06-14 16:08:21.783 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 7.175 seconds (process running for 9.692)
-2026-06-14 16:08:22.420 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-06-14 16:08:22.422 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-06-14 16:08:22.426 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-06-14 16:12:37.360 [SpringApplicationShutdownHook] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-06-14 16:12:37.368 [tomcat-shutdown] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-06-14 16:13:41.177 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
-2026-06-14 16:13:41.185 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "staging"
-2026-06-14 16:13:43.951 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-14 16:13:43.971 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:13:43.976 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-14 16:13:43.977 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-06-14 16:13:44.022 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2715 ms
-2026-06-14 16:13:45.124 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
-2026-06-14 16:13:45.226 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:13:45.289 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
-2026-06-14 16:13:45.325 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 5.626 seconds (process running for 7.248)
-2026-06-14 16:13:48.567 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-06-14 16:13:48.568 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-06-14 16:13:48.572 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-06-14 16:22:02.105 [SpringApplicationShutdownHook] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-06-14 16:22:02.115 [tomcat-shutdown] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-06-14 16:22:28.548 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
-2026-06-14 16:22:28.556 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "staging"
-2026-06-14 16:22:31.388 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-14 16:22:31.412 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:22:31.417 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-14 16:22:31.419 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-06-14 16:22:31.464 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2782 ms
-2026-06-14 16:22:32.682 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
-2026-06-14 16:22:32.777 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:22:32.847 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
-2026-06-14 16:22:32.869 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 5.913 seconds (process running for 7.156)
-2026-06-14 16:22:36.020 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-06-14 16:22:36.021 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-06-14 16:22:36.025 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-06-14 16:25:22.883 [SpringApplicationShutdownHook] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-06-14 16:25:22.894 [tomcat-shutdown] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-06-14 16:25:27.200 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
-2026-06-14 16:25:27.207 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "staging"
-2026-06-14 16:25:29.601 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-14 16:25:29.623 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:25:29.629 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-14 16:25:29.630 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-06-14 16:25:29.684 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2366 ms
-2026-06-14 16:25:31.773 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
-2026-06-14 16:25:31.884 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:25:31.959 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
-2026-06-14 16:25:31.983 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 6.44 seconds (process running for 8.381)
-2026-06-14 16:25:33.853 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-06-14 16:25:33.855 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-06-14 16:25:33.858 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-06-14 16:25:45.937 [SpringApplicationShutdownHook] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Commencing graceful shutdown. Waiting for active requests to complete
-2026-06-14 16:25:45.968 [tomcat-shutdown] [NO_TRACE] INFO  o.s.boot.tomcat.GracefulShutdown - Graceful shutdown complete
-2026-06-14 16:26:13.768 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
-2026-06-14 16:26:13.777 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "staging"
-2026-06-14 16:26:16.694 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
-2026-06-14 16:26:16.718 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:26:16.724 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
-2026-06-14 16:26:16.726 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
-2026-06-14 16:26:16.777 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 2848 ms
-2026-06-14 16:26:17.911 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
-2026-06-14 16:26:18.034 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
-2026-06-14 16:26:18.145 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
-2026-06-14 16:26:18.171 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 6.325 seconds (process running for 7.729)
-2026-06-14 16:26:20.715 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
-2026-06-14 16:26:20.717 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
-2026-06-14 16:26:20.721 [http-nio-8081-exec-1] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 2 ms
-2026-06-14 16:29:08.652 [http-nio-8081-exec-7] [adc4a3533d34481d] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
-2026-06-14 16:29:08.653 [http-nio-8081-exec-7] [adc4a3533d34481d] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
-2026-06-14 16:33:36.922 [http-nio-8081-exec-9] [695182409c4f4aa3] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
-2026-06-14 16:35:00.282 [http-nio-8081-exec-5] [94e25d0bbbf347f8] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
-2026-06-14 16:38:18.455 [http-nio-8081-exec-4] [7add82dd59524b1c] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
-2026-06-14 16:39:52.440 [http-nio-8081-exec-1] [e4dec6ce383e48f8] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
-2026-06-14 17:22:35.457 [http-nio-8081-exec-9] [0c03b06e874647e4] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:07:04.924 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Starting LogsAppStagingApplication v0.0.1-SNAPSHOT using Java 21.0.11 with PID 1 (/app/app.jar started by appuser in /app)
+2026-06-15 14:07:04.954 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - The following 1 profile is active: "staging"
+2026-06-15 14:07:14.887 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat initialized with port 8081 (http)
+2026-06-15 14:07:14.939 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Initializing ProtocolHandler ["http-nio-8081"]
+2026-06-15 14:07:14.950 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardService - Starting service [Tomcat]
+2026-06-15 14:07:14.953 [main] [NO_TRACE] INFO  o.a.catalina.core.StandardEngine - Starting Servlet engine: [Apache Tomcat/11.0.22]
+2026-06-15 14:07:15.078 [main] [NO_TRACE] INFO  o.s.b.w.c.s.WebApplicationContextInitializer - Root WebApplicationContext: initialization completed in 9632 ms
+2026-06-15 14:07:17.547 [main] [NO_TRACE] INFO  o.s.b.a.e.web.EndpointLinksResolver - Exposing 1 endpoint beneath base path '/actuator'
+2026-06-15 14:07:17.746 [main] [NO_TRACE] INFO  o.a.coyote.http11.Http11NioProtocol - Starting ProtocolHandler ["http-nio-8081"]
+2026-06-15 14:07:17.991 [main] [NO_TRACE] INFO  o.s.boot.tomcat.TomcatWebServer - Tomcat started on port 8081 (http) with context path '/'
+2026-06-15 14:07:18.060 [main] [NO_TRACE] INFO  c.s.l.LogsAppStagingApplication - Started LogsAppStagingApplication in 17.482 seconds (process running for 22.736)
+2026-06-15 14:07:22.719 [http-nio-8081-exec-2] [NO_TRACE] INFO  o.a.c.c.C.[Tomcat].[localhost].[/] - Initializing Spring DispatcherServlet 'dispatcherServlet'
+2026-06-15 14:07:22.722 [http-nio-8081-exec-2] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Initializing Servlet 'dispatcherServlet'
+2026-06-15 14:07:22.728 [http-nio-8081-exec-2] [NO_TRACE] INFO  o.s.web.servlet.DispatcherServlet - Completed initialization in 3 ms
+2026-06-15 14:17:52.166 [http-nio-8081-exec-4] [69c6aedce871480d] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:17:52.168 [http-nio-8081-exec-4] [69c6aedce871480d] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:17:56.427 [http-nio-8081-exec-3] [517a889d723949c6] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:18:01.683 [http-nio-8081-exec-6] [81ee5f0952a24576] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
+2026-06-15 14:18:47.890 [http-nio-8081-exec-8] [5c781eb62b454196] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:18:48.957 [http-nio-8081-exec-9] [3fd1c416f42c48fe] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:18:49.939 [http-nio-8081-exec-10] [1522906aed5c47b9] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:18:51.064 [http-nio-8081-exec-2] [afd17518127c4f59] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:19:40.266 [http-nio-8081-exec-5] [d61966d2873340ad] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
+2026-06-15 14:19:45.199 [http-nio-8081-exec-3] [d854b2e734e34ef0] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:20:47.917 [http-nio-8081-exec-9] [11680d6232d8401b] INFO  c.s.logsapp.LogGeneratorService - Log generator started
+2026-06-15 14:20:47.976 [http-nio-8081-exec-2] [2831a526aceb4a25] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:20:47.981 [http-nio-8081-exec-2] [2831a526aceb4a25] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:20:52.920 [http-nio-8081-exec-1] [f68ba401b06c4230] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:20:57.919 [http-nio-8081-exec-5] [f3c3e894bf1642c2] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
+2026-06-15 14:21:02.918 [http-nio-8081-exec-3] [5b2fdb7f69c94892] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:07.917 [http-nio-8081-exec-6] [b3b791b7ac35415d] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:21:07.918 [http-nio-8081-exec-6] [b3b791b7ac35415d] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:21:12.916 [http-nio-8081-exec-7] [e78801a0c894424a] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:17.916 [http-nio-8081-exec-8] [cab1d762311b4e01] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:22.917 [http-nio-8081-exec-10] [a9864399e68b42d6] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:21:22.918 [http-nio-8081-exec-10] [a9864399e68b42d6] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:21:27.917 [http-nio-8081-exec-2] [b4735580bcb84ff3] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:32.915 [http-nio-8081-exec-1] [f97eedae339e4162] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:37.915 [http-nio-8081-exec-4] [c987ccfbf8754442] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:21:37.917 [http-nio-8081-exec-4] [c987ccfbf8754442] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:21:42.916 [http-nio-8081-exec-5] [0acce74ffc0c4733] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:47.916 [http-nio-8081-exec-3] [16317bf367a54481] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:52.915 [http-nio-8081-exec-7] [d338d533f44b49c8] WARN  com.staging.logsapp.TestController - Disk space running low on server 'db-server-01': only 5% remaining
+2026-06-15 14:21:57.915 [http-nio-8081-exec-10] [21f09feb74c6423a] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:21:57.916 [http-nio-8081-exec-10] [21f09feb74c6423a] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:22:02.914 [http-nio-8081-exec-9] [1edd41205fc54c6d] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:22:02.915 [http-nio-8081-exec-9] [1edd41205fc54c6d] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:22:07.914 [http-nio-8081-exec-2] [65e5eafaaf374263] INFO  com.staging.logsapp.TestController - User #88421 updated profile successfully, 3 fields changed
+2026-06-15 14:22:12.759 [http-nio-8081-exec-4] [6c4354b3d7cd4580] INFO  c.s.logsapp.LogGeneratorService - Log generator stopped
+2026-06-15 14:24:25.029 [http-nio-8081-exec-2] [a3ce09b7d0aa4904] ERROR com.staging.logsapp.TestController - Payment processing failed for order #12345: insufficient funds
+java.lang.RuntimeException: Payment gateway timeout
+	at com.staging.logsapp.TestController.getLogError(TestController.java:66)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at com.staging.logsapp.TraceIdFilter.doFilterInternal(TraceIdFilter.java:28)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
+2026-06-15 14:34:26.722 [http-nio-8081-exec-5] [f6a3074495c24913] INFO  com.staging.logsapp.TestController - User #88421 created a new order #56789 with 2 items in cart
+2026-06-15 14:34:26.726 [http-nio-8081-exec-5] [f6a3074495c24913] ERROR com.staging.logsapp.TestController - Database connection pool exhausted — all 20 connections in use, request queued
+2026-06-15 14:34:32.820 [http-nio-8081-exec-6] [3afb310407c344cc] ERROR com.staging.logsapp.TestController - Payment processing failed for order #12345: insufficient funds
+java.lang.RuntimeException: Payment gateway timeout
+	at com.staging.logsapp.TestController.getLogError(TestController.java:66)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.springframework.web.method.support.InvocableHandlerMethod.doInvoke(InvocableHandlerMethod.java:252)
+	at org.springframework.web.method.support.InvocableHandlerMethod.invokeForRequest(InvocableHandlerMethod.java:184)
+	at org.springframework.web.servlet.mvc.method.annotation.ServletInvocableHandlerMethod.invokeAndHandle(ServletInvocableHandlerMethod.java:117)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.invokeHandlerMethod(RequestMappingHandlerAdapter.java:934)
+	at org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter.handleInternal(RequestMappingHandlerAdapter.java:853)
+	at org.springframework.web.servlet.mvc.method.AbstractHandlerMethodAdapter.handle(AbstractHandlerMethodAdapter.java:86)
+	at org.springframework.web.servlet.DispatcherServlet.doDispatch(DispatcherServlet.java:963)
+	at org.springframework.web.servlet.DispatcherServlet.doService(DispatcherServlet.java:866)
+	at org.springframework.web.servlet.FrameworkServlet.processRequest(FrameworkServlet.java:1000)
+	at org.springframework.web.servlet.FrameworkServlet.doGet(FrameworkServlet.java:892)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:622)
+	at org.springframework.web.servlet.FrameworkServlet.service(FrameworkServlet.java:874)
+	at jakarta.servlet.http.HttpServlet.service(HttpServlet.java:710)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:128)
+	at org.apache.tomcat.websocket.server.WsFilter.doFilter(WsFilter.java:53)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.RequestContextFilter.doFilterInternal(RequestContextFilter.java:100)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.FormContentFilter.doFilterInternal(FormContentFilter.java:93)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.ServerHttpObservationFilter.doFilterInternal(ServerHttpObservationFilter.java:110)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.springframework.web.filter.CharacterEncodingFilter.doFilterInternal(CharacterEncodingFilter.java:199)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at com.staging.logsapp.TraceIdFilter.doFilterInternal(TraceIdFilter.java:28)
+	at org.springframework.web.filter.OncePerRequestFilter.doFilter(OncePerRequestFilter.java:116)
+	at org.apache.catalina.core.ApplicationFilterChain.doFilter(ApplicationFilterChain.java:107)
+	at org.apache.catalina.core.StandardWrapperValve.invoke(StandardWrapperValve.java:165)
+	at org.apache.catalina.core.StandardContextValve.invoke(StandardContextValve.java:77)
+	at org.apache.catalina.authenticator.AuthenticatorBase.invoke(AuthenticatorBase.java:492)
+	at org.apache.catalina.core.StandardHostValve.invoke(StandardHostValve.java:113)
+	at org.apache.catalina.valves.ErrorReportValve.invoke(ErrorReportValve.java:83)
+	at org.apache.catalina.core.StandardEngineValve.invoke(StandardEngineValve.java:72)
+	at org.apache.catalina.connector.CoyoteAdapter.service(CoyoteAdapter.java:341)
+	at org.apache.coyote.http11.Http11Processor.service(Http11Processor.java:397)
+	at org.apache.coyote.AbstractProcessorLight.process(AbstractProcessorLight.java:63)
+	at org.apache.coyote.AbstractProtocol$ConnectionHandler.process(AbstractProtocol.java:1272)
+	at org.apache.tomcat.util.net.NioEndpoint$SocketProcessor.doRun(NioEndpoint.java:1801)
+	at org.apache.tomcat.util.net.SocketProcessorBase.run(SocketProcessorBase.java:52)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:946)
+	at org.apache.tomcat.util.threads.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:480)
+	at org.apache.tomcat.util.threads.TaskThread$WrappingRunnable.run(TaskThread.java:57)
+	at java.base/java.lang.Thread.run(Unknown Source)
