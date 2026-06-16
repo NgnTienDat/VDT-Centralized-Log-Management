@@ -1,6 +1,4 @@
-import { SERVICES } from "../../utils/constants.js";
-
-export default function ServiceFilter({ value, onChange, isDark }) {
+export default function ServiceFilter({ value, onChange, services = [], isDark }) {
     return (
         <div className="flex items-center gap-2">
             <span className="text-[11px] tracking-widest text-slate-600 uppercase">Service:</span>
@@ -15,7 +13,11 @@ export default function ServiceFilter({ value, onChange, isDark }) {
                         : "bg-slate-50 border-slate-300 text-slate-700",
                 ].join(" ")}
             >
-                {SERVICES.map((s) => (
+                {/* 🌟 Luôn có option mặc định để hủy filter service */}
+                <option value="ALL">ALL SERVICES</option>
+
+                {/* Duyệt qua danh sách services lấy động từ API */}
+                {services.map((s) => (
                     <option key={s} value={s}>
                         {s}
                     </option>

@@ -69,6 +69,7 @@ export function useLogQuery(options = {}) {
 
     const mappedLogs = rawLogs.map((item) => ({
         id: item.id,
+        docId: item.docId,
         timestamp: item.eventTimestamp || item.timestamp,
         level: (item.logLevel || item.level)?.toUpperCase() || "INFO",
         env: (item.environment || item.env)?.toUpperCase() || "DEV",

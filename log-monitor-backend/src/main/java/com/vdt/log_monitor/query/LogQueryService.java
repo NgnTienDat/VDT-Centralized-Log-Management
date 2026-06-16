@@ -1,9 +1,13 @@
 package com.vdt.log_monitor.query;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
+import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
+import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 
 import com.vdt.log_monitor.common.dto.CursorPage;
+import com.vdt.log_monitor.common.dto.LogIngestRequest;
+import com.vdt.log_monitor.common.dto.LogMessageDto;
 import com.vdt.log_monitor.common.dto.LogSearchRequest;
 import com.vdt.log_monitor.common.entity.LogDocument;
 
@@ -11,20 +15,25 @@ import java.time.Instant;
 
 import com.vdt.log_monitor.common.exception.AppException;
 import com.vdt.log_monitor.common.exception.ErrorCode;
+import com.vdt.log_monitor.common.mapper.LogMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.ResourceNotFoundException;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.FetchSourceFilter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,8 +42,9 @@ import java.util.List;
 public class LogQueryService {
 
     private final LogSearchRepository logSearchRepository;
+    private final LogMapper logMapper;
 
-    public CursorPage<LogDocument> search(LogSearchRequest request) {
+    public CursorPage<LogMessageDto> search(LogSearchRequest request) {
 
         int limit = request.getSize() != null ? request.getSize() : 20;
 
@@ -80,6 +90,7 @@ public class LogQueryService {
         // Sort đúng: @timestamp DESC + doc_id DESC (field thường, có doc_values)
         NativeQuery query = NativeQuery.builder()
                 .withQuery(q -> q.bool(boolQueryBuilder.build()))
+                .withSourceFilter(new FetchSourceFilter(null, null, new String[]{"stack_trace"}))
                 .withSort(s -> s.field(f -> f
                         .field("@timestamp")
                         .order(SortOrder.Desc)))
@@ -96,16 +107,22 @@ public class LogQueryService {
                 .toList();
 
         boolean hasMore = allHits.size() > limit;
-        List<LogDocument> data = new ArrayList<>(
-                allHits.subList(0, Math.min(allHits.size(), limit)));
 
+        // 🌟 BƯỚC CẢI TIẾN: Dùng Stream map qua LogMapper.toDto luôn.
+        // Việc dùng .stream().map(...).toList() sẽ tự động tạo ra một List mới hoàn toàn,
+        // giải quyết triệt để vấn đề giữ vùng nhớ (Memory Leak) của subList mà không cần bọc new ArrayList<>().
+        List<LogMessageDto> data = allHits.subList(0, Math.min(allHits.size(), limit)).stream()
+                .map(logMapper::toDto)
+                .toList();
+
+        // --- Lấy thông tin Cursor từ danh sách DTO cuối cùng ---
         Instant nextCursorTs = data.isEmpty() ? null
                 : data.get(data.size() - 1).getEventTimestamp();
 
         String nextCursorId = data.isEmpty() ? null
                 : data.get(data.size() - 1).getDocId();
 
-        return CursorPage.<LogDocument>builder()
+        return CursorPage.<LogMessageDto>builder()
                 .data(data)
                 .hasMore(hasMore)
                 .nextCursor(nextCursorTs)
@@ -113,17 +130,66 @@ public class LogQueryService {
                 .build();
     }
 
-    public LogDocument findById(String id) {
-        return logSearchRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND));
+
+
+    public LogMessageDto findById(String id) {
+        return logMapper.toDto(logSearchRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND)));
     }
 
-    /**
-     * Fetch by the doc_id keyword field.
-     * Throws ResourceNotFoundException (→ 404) when not found.
-     */
-    public LogDocument findByDocId(String docId) {
-        return logSearchRepository.findByDocId(docId)
-                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND));
+
+    public LogMessageDto findByDocId(String docId) {
+        return logMapper.toDto(logSearchRepository.findByDocId(docId)
+                .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND)));
+    }
+
+    public List<String> getUniqueServices() {
+
+        NativeQuery query = NativeQuery.builder()
+                .withMaxResults(0) // không lấy document
+                .withAggregation(
+                        "services",
+                        Aggregation.of(a -> a
+                                .terms(t -> t
+                                        .field("service")
+                                        .size(100)
+                                )
+                        )
+                )
+                .build();
+
+        SearchHits<LogDocument> searchHits = logSearchRepository.search(query);
+
+        ElasticsearchAggregations aggregations =
+                (ElasticsearchAggregations) searchHits.getAggregations();
+
+        var serviceAgg = aggregations.get("services");
+
+        return serviceAgg.aggregation()
+                .getAggregate()
+                .sterms()
+                .buckets()
+                .array()
+                .stream()
+                .map(bucket -> bucket.key().stringValue())
+                .toList();
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

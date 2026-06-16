@@ -3,6 +3,7 @@ package com.vdt.log_monitor.collector;
 import com.vdt.log_monitor.common.dto.LogIngestRequest;
 import com.vdt.log_monitor.common.dto.LogIngestedEvent;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
+import com.vdt.log_monitor.common.mapper.LogMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -39,7 +40,7 @@ import org.springframework.stereotype.Service;
 public class LogCollectorService {
 
     private final ApplicationEventPublisher eventPublisher;
-
+    private final LogMapper logMapper;
     /**
      * @Async: chạy trên thread pool riêng. Controller trả 202 ngay,
      *         không chờ method này — không block HTTP thread của Logstash.
@@ -47,7 +48,7 @@ public class LogCollectorService {
     @Async
     public void ingest(LogIngestRequest request) {
         try {
-            LogMessageDto dto = mapToDto(request);
+            LogMessageDto dto = logMapper.toDto(request);
 
             // Publish — tất cả @EventListener với LogIngestedEvent sẽ được gọi:
             // LogWebSocketPublisher.onLogIngested() → broadcast STOMP
@@ -63,21 +64,6 @@ public class LogCollectorService {
         }
     }
 
-    private LogMessageDto mapToDto(LogIngestRequest req) {
-        return LogMessageDto.builder()
-                .docId(req.getDocId())
-                .traceId(req.getTraceId())
-                .logLevel(req.getLogLevel())
-                .environment(normalizeEnv(req.getEnvironment()))
-                .serviceName(req.getServiceName())
-                .thread(req.getThread())
-                .logMessage(req.getMessage())
-                .eventTimestamp(req.getEventTimestamp())
-                .hostName(req.getHostName())
-                .logger(req.getLogger())
-                .stackTrace(req.getStackTrace())
-                .build();
-    }
 
     private String normalizeEnv(String env) {
         return env != null ? env.toLowerCase().trim() : "unknown";

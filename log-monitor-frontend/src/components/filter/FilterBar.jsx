@@ -8,6 +8,7 @@ export default function FilterBar({
     filterLevel, onLevel,
     filterEnv, onEnv,
     filterService, onService,
+    services, // 🌟 NHẬN THÊM PROP SERVICES ĐỘNG Ở ĐÂY
     filteredCount, totalCount,
     isDark,
 }) {
@@ -28,7 +29,15 @@ export default function FilterBar({
             {/* Row 2: env + service + count */}
             <div className="px-4 py-2.5 flex items-center gap-2.5 flex-wrap">
                 <EnvFilter value={filterEnv} onChange={onEnv} isDark={isDark} />
-                <ServiceFilter value={filterService} onChange={onService} isDark={isDark} />
+
+                {/* 🌟 TRUYỀN MẢNG SERVICES XUỐNG COMPONENT CON */}
+                <ServiceFilter
+                    value={filterService}
+                    onChange={onService}
+                    services={services}
+                    isDark={isDark}
+                />
+
                 <span className="ml-auto text-[11px] text-slate-600 font-mono">
                     Showing{" "}
                     <span className={isDark ? "text-sky-400" : "text-sky-600"}>{filteredCount}</span>

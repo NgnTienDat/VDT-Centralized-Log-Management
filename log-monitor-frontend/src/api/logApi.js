@@ -78,15 +78,36 @@ export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
     return response.data; // response.data là CursorPage
 }
 
+
 /**
- * Fetch chi tiết 1 log theo id.
+ * Fetch chi tiết 1 log.
  * Dùng khi user click vào LogRow để xem full detail + stackTrace.
  *
- * @param {string} id - ES document _id
- * @returns {Promise<LogEntry>}
+ * Backend hỗ trợ 2 cách lookup qua query param `by`:
+ *   GET /api/v1/logs/{value}              → tìm theo ES _id        (by mặc định = "id")
+ *   GET /api/v1/logs/{value}?by=doc_id    → tìm theo field doc_id
+ *
+ * List log (fetchLogs) trả về cả `id` (ES _id) và `docId` (UUID nghiệp vụ).
+ * UI thường lưu/điều hướng theo `docId`, nên mặc định ở đây dùng "doc_id".
+ *
+ * @param {string} value - id hoặc docId tùy `by`
+ * @param {"id"|"doc_id"} [by="doc_id"]
+ * @returns {Promise<LogEntry>} full log detail (bao gồm stackTrace, appName, hostName, logger)
  */
-export async function fetchLogById(id) {
-    const response = await axiosClient.get(`/api/v1/logs/${id}`);
+export async function fetchLogById(value, by = "doc_id") {
+    const params = buildParams({ by });
+    const response = await axiosClient.get(`/api/v1/logs/${value}?${params}`);
     return response.data;
 }
 
+// Thêm hàm này vào cuối file logApi.js của bạn
+
+/**
+ * Fetch danh sách các microservices duy nhất hiện có từ Elasticsearch aggregations.
+ * @returns {Promise<string[]>} Mảng các tên service (ví dụ: ["logs-service", "auth-service"])
+ */
+export async function fetchServices() {
+    // axiosClient đã unwrap ApiResponse nên nhận thẳng response.data
+    const response = await axiosClient.get("/api/v1/logs/services");
+    return response.data;
+}

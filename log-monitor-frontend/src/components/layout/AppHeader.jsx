@@ -12,10 +12,10 @@ export default function AppHeader({ isDark, onToggleTheme, liveMode, onToggleLiv
         : "bg-white border-slate-200 text-slate-500 hover:text-slate-700";
 
     const liveButtonClass = liveMode
-        ? "bg-red-500/10 border-red-500/40 text-red-400"
+        ? "bg-red-500/12 border-red-500/45 text-red-400 hover:bg-red-500/18"
         : isDark
-            ? "bg-white/3 border-white/6 text-slate-500"
-            : "bg-white border-slate-200 text-slate-500";
+            ? "bg-emerald-500/10 border-emerald-500/35 text-emerald-400 hover:bg-emerald-500/16"
+            : "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100";
 
     return (
         <div className={`border-b px-6 flex items-center justify-between h-14 transition-colors duration-200 ${headerClass}`}>
@@ -46,15 +46,28 @@ export default function AppHeader({ isDark, onToggleTheme, liveMode, onToggleLiv
                     </div>
                 )}
 
-                {/* Live toggle */}
+                {/* Live toggle — hiển thị HÀNH ĐỘNG sẽ xảy ra khi bấm, không phải trạng thái hiện tại */}
                 <button
                     onClick={onToggleLive}
+                    title={liveMode ? "Click to pause live updates" : "Click to start live updates"}
                     className={`flex items-center gap-2 border rounded-md px-3.5 py-1.5 cursor-pointer font-mono text-[11px] font-bold tracking-wider transition-all duration-200 ${liveButtonClass}`}
                 >
-                    <span
-                        className={`w-2 h-2 rounded-full inline-block ${liveMode ? "animate-pulse bg-red-400" : isDark ? "bg-slate-600" : "bg-slate-400"}`}
-                    />
-                    {liveMode ? "LIVE" : "PAUSED"}
+                    {liveMode ? (
+                        <>
+                            {/* Đang LIVE — icon pause = bấm để dừng */}
+                            <span className="relative flex items-center justify-center w-2 h-2">
+                                <span className="absolute w-2 h-2 rounded-full bg-red-400 animate-ping opacity-75" />
+                                <span className="w-2 h-2 rounded-full bg-red-400" />
+                            </span>
+                            <span>⏸ PAUSE</span>
+                        </>
+                    ) : (
+                        <>
+                            {/* Đang PAUSED — icon play = bấm để chạy live */}
+                            <span className={`w-2 h-2 rounded-full inline-block ${isDark ? "bg-slate-600" : "bg-slate-400"}`} />
+                            <span>▶ GO LIVE</span>
+                        </>
+                    )}
                 </button>
 
                 {/* Theme toggle */}

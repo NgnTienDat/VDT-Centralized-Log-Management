@@ -34,5 +34,5 @@ public class LogMessageDto {
     private String thread;
     private String logMessage;   // main message đã tách stack trace (nếu có)
     private Long durationMs;     // null với log không phải request log
-    private String stackTrace;   // chỉ có khi level = ERROR
+    private String stackTrace;
 }

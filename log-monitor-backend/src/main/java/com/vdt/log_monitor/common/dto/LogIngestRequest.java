@@ -17,7 +17,7 @@ public class LogIngestRequest {
     private String thread;
     private String logger;
     private String message;
-    private String stackTrace;
+//    private String stackTrace;
     private Instant eventTimestamp;
     private String hostName;
 }

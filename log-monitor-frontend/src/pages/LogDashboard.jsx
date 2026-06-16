@@ -12,6 +12,7 @@ import StatsRow from "../components/stats/StatsRow.jsx";
 import { useLogQuery } from "../hooks/useLogQuery.js";
 import { useLogStream } from "../hooks/useLogStream.js";
 import { useFilterStore } from "../stores/useFilterStore.js";
+import { useServicesQuery } from "../hooks/useServiceQuery.js";
 
 export default function LogDashboard() {
     const [isDark, setIsDark] = useState(true);
@@ -33,7 +34,7 @@ export default function LogDashboard() {
         setServiceName,
         setQ
     } = useFilterStore();
-
+    const { services } = useServicesQuery();
     const {
         logs,
         isLoading,
@@ -121,6 +122,7 @@ export default function LogDashboard() {
                     filterService={serviceName || "ALL"} onService={setServiceName}
                     filteredCount={logs.length} totalCount={logs.length}
                     isDark={isDark}
+                    services={services}
                 />
 
                 <div className="mt-1">

@@ -30,7 +30,7 @@ public class LogCollectorController {
     private final LogCollectorService logCollectorService;
 
     /**
-     * Logstash gọi endpoint này mỗi khi có log ERROR/WARN mới.
+     * Logstash gọi endpoint này mỗi khi có log mới.
      *
      * Trả về nhanh nhất có thể — Logstash có timeout mặc định 60s,
      * nhưng response chậm sẽ làm pipeline Logstash bị block.
@@ -40,13 +40,6 @@ public class LogCollectorController {
      */
     @PostMapping("/ingest")
     public ResponseEntity<Void> ingest(@RequestBody @Valid LogIngestRequest request) {
-//        if (request.getLogLevel().name().equalsIgnoreCase("WARN")) {
-//            log.warn("Received log — service: {}, level: {}, traceId: {}",
-//                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
-//        } else if (request.getLogLevel().name().equalsIgnoreCase("ERROR")) {
-//            log.error("Received log — service: {}, level: {}, traceId: {}",
-//                    request.getServiceName(), request.getLogLevel(), request.getTraceId());
-//        }
          logCollectorService.ingest(request);
 
         // 202 Accepted: đã nhận, đang xử lý async
