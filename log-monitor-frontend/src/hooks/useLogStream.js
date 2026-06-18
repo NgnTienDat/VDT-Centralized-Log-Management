@@ -21,10 +21,6 @@ export function useLogStream(liveMode, isFetching) {
 
         console.log("Starting STOMP client connection...");
 
-        // Construct broker URL dynamically based on current API base URL
-        // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8082";
-        // const wsUrl = apiBaseUrl.replace(/^http/, "ws") + "/ws";
-
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
         let wsUrl = "";
@@ -87,6 +83,7 @@ export function useLogStream(liveMode, isFetching) {
                             // Thay vì lấy rawLog.id luôn bị null, ưu tiên lấy rawLog.docId từ Logstash
                             const mappedLog = {
                                 id: rawLog.docId || rawLog.id,
+                                docId: rawLog.docId,
                                 timestamp: rawLog.eventTimestamp,
                                 level: rawLog.logLevel?.toUpperCase() || "INFO",
                                 env: rawLog.environment?.toUpperCase() || "DEV",

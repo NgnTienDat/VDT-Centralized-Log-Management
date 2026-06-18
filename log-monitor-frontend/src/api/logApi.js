@@ -73,9 +73,7 @@ export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
     // Tức là response ở đây là CursorPage { data, hasMore, nextCursor, nextCursorId }
     console.log("Fetching logs with params:", params.toString());
     const response = await axiosClient.get(`/api/v1/logs?${params}`);
-    // console.log("Fetched logs:", response.data);
-    console.log("it works");
-    return response.data; // response.data là CursorPage
+    return response.data;
 }
 
 
@@ -100,7 +98,6 @@ export async function fetchLogById(value, by = "doc_id") {
     return response.data;
 }
 
-// Thêm hàm này vào cuối file logApi.js của bạn
 
 /**
  * Fetch danh sách các microservices duy nhất hiện có từ Elasticsearch aggregations.
