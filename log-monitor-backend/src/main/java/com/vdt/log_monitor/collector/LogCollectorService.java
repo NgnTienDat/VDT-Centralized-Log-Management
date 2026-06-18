@@ -63,9 +63,4 @@ public class LogCollectorService {
                     request.getTraceId(), e.getMessage(), e);
         }
     }
-
-
-    private String normalizeEnv(String env) {
-        return env != null ? env.toLowerCase().trim() : "unknown";
-    }
 }

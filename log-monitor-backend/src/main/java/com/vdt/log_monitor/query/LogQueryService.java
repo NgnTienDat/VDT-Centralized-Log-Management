@@ -2,11 +2,9 @@ package com.vdt.log_monitor.query;
 
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
-import co.elastic.clients.elasticsearch._types.aggregations.StringTermsBucket;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
 
 import com.vdt.log_monitor.common.dto.CursorPage;
-import com.vdt.log_monitor.common.dto.LogIngestRequest;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
 import com.vdt.log_monitor.common.dto.LogSearchRequest;
 import com.vdt.log_monitor.common.entity.LogDocument;
@@ -19,8 +17,6 @@ import com.vdt.log_monitor.common.mapper.LogMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.elasticsearch.ResourceNotFoundException;
 import org.springframework.data.elasticsearch.client.elc.ElasticsearchAggregations;
 import org.springframework.data.elasticsearch.client.elc.NativeQuery;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -30,10 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

@@ -22,8 +22,25 @@ export function useLogStream(liveMode, isFetching) {
         console.log("Starting STOMP client connection...");
 
         // Construct broker URL dynamically based on current API base URL
-        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8082";
-        const wsUrl = apiBaseUrl.replace(/^http/, "ws") + "/ws";
+        // const apiBaseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8082";
+        // const wsUrl = apiBaseUrl.replace(/^http/, "ws") + "/ws";
+
+        const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+
+        let wsUrl = "";
+
+        if (apiBaseUrl) {
+            // 1. Môi trường Local: Chuyển http://localhost:8082 thành ws://localhost:8082/ws
+            wsUrl = apiBaseUrl.replace(/^http/, "ws") + "/ws";
+        } else {
+            // 2. Môi trường Production: Tự động lấy IP/Domain và Protocol hiện tại của trình duyệt
+            const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+            const host = window.location.host; // Bao gồm cả port nếu có (ví dụ: 13.250.xx.xx)
+
+            // Lúc này wsUrl trên Prod sẽ tự động là: ws://<IP_EC2>/ws
+            wsUrl = `${protocol}//${host}/ws`;
+        }
+
 
         // 2. Smart Topic Routing Matrix
         const env = environment?.toLowerCase();

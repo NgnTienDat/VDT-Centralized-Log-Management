@@ -1,18 +1,13 @@
 package com.vdt.log_monitor.query;
 
-import co.elastic.clients.elasticsearch._types.FieldValue;
 import com.vdt.log_monitor.common.dto.ApiResponse;
 import com.vdt.log_monitor.common.dto.CursorPage;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
 import com.vdt.log_monitor.common.dto.LogSearchRequest;
-import com.vdt.log_monitor.common.entity.LogDocument;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
