@@ -51,7 +51,7 @@ public class LogGeneratorService {
         String endpoint = switch (random.nextInt(4)) {
             case 0 -> "/info";
             case 1 -> "/warn";
-            // case 2 -> "/error";
+            case 2 -> "/error";
             default -> "/all";
         };
 
