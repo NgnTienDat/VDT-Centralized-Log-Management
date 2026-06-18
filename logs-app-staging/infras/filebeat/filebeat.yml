@@ -28,4 +28,4 @@ processors:
 # Đích đến: Logstash chạy trong cùng docker network
 output.logstash:
   # Cùng network khác compose thì gọi bằng container_name
-  hosts: ["log-monitor-logstash:5044"] # Gọi sang container logstash chung mạng mạng docker
+  hosts: ["47.129.238.26:5044"] # Gọi sang container logstash chung mạng mạng docker
