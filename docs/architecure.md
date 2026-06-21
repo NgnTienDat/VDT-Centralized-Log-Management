@@ -75,13 +75,6 @@ flowchart TD
     ALERT --> WS
     WS --> REACT
 
-    %% =========================
-    %% STYLE COLORS
-    %% =========================
-    style SOURCES fill:#1e3a5f,color:#fff,stroke:#4a90d9
-    style PROCESS fill:#5a3a00,color:#fff,stroke:#ff9f00
-    style STORAGE fill:#4a2d1e,color:#fff,stroke:#d9844a
-    style BACKEND fill:#3a1e4a,color:#fff,stroke:#9b59b6
-    style FRONTEND_LAYER fill:#1e3a4a,color:#fff,stroke:#3498db
+    
 
 ```

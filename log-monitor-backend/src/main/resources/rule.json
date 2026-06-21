@@ -1,0 +1,17 @@
+{
+  "rules": [
+    {
+      "id": "HIGH_ERROR_RATE",
+      "type": "COUNT_THRESHOLD",
+      "enabled": true,
+      "environment": "*",
+      "application": "*",
+      "level": "ERROR",
+      "keyword": null,
+      "threshold": 10,
+      "windowMinutes": 5,
+      "cooldownMinutes": 10,
+      "severity": "HIGH"
+    }
+  ]
+}
