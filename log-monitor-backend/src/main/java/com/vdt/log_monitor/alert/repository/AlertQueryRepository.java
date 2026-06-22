@@ -40,10 +40,10 @@ public class AlertQueryRepository {
      * @param rule the alert rule defining the query filters
      * @return the count of matching log documents
      */
-    public long countMatchingLogs(AlertRule rule) {
-        Instant windowStart = Instant.now().minus(rule.getWindowMinutes(), ChronoUnit.MINUTES);
+    public long countMatchingLogs(AlertRule rule, Instant windowStart) {
+//        Instant windowStart = Instant.now().minus(rule.getWindowMinutes(), ChronoUnit.MINUTES);
         BoolQuery.Builder boolBuilder = QueryBuilders.bool();
-        // Timestamp sliding window: @timestamp >= (now - windowMinutes)
+        // Timestamp sliding window: @timestamp >= windowStart
         boolBuilder.filter(f -> f.range(r -> r
                 .date(d -> d
                         .field("@timestamp")

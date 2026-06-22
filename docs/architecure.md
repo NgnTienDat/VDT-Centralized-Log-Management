@@ -1,80 +1,89 @@
-```mermaid
+```mermaid  
 flowchart TD
 
     %% =========================
     %% LOG PRODUCERS & AGENTS (MULTI-ENV)
     %% =========================
     subgraph SOURCES["📦 Multi-Environment Nodes (Log Sources & Filebeat)"]
-        direction TB 
+        direction TB
          
-        subgraph ENV_DEV["Môi trường DEV (Ví dụ)"]
-            A1[Auth Service\n- Async Logging] -->|local .log| FB1[Filebeat Agent\n- Tags: env=dev]
-            A2[Chat Service] -->|local .log| FB1
+        subgraph ENV_DEV["DEV Environment (Example)"]
+            A1[Auth Service<br/>Asynchronous Logging] -->|local .log file| FB1[Filebeat Agent<br/>Tags: env=dev]
+            A2[Chat Service] -->|local .log file| FB1
         end
 
-        subgraph ENV_STAGING["Môi trường STAGING (Ví dụ)"]
-            B1[Auth Service] -->|local .log| FB2[Filebeat Agent\n- Tags: env=staging]
-            B2[Chat Service] -->|local .log| FB2
+        subgraph ENV_STAGING["STAGING Environment (Example)"]
+            B1[Auth Service] -->|local .log file| FB2[Filebeat Agent<br/>Tags: env=staging]
+            B2[Chat Service] -->|local .log file| FB2
         end
         
-        subgraph ENV_TEST["Môi trường TEST (Ví dụ)"]
-            C1[Auth Service] -->|local .log| FB3[Filebeat Agent\n- Tags: env=test]
+        subgraph ENV_TEST["TEST Environment (Example)"]
+            C1[Auth Service] -->|local .log file| FB3[Filebeat Agent<br/>Tags: env=test]
         end
     end
 
     %% =========================
-    %% PROCESSING LAYER (LOGSTASH)
+    %% PROCESSING LAYER
     %% =========================
-    subgraph PROCESS["⚙️ Processing Layer"]
-        LS[Logstash Instance\n1. Nhận log từ các Filebeat\n2. Phân tách Grok/JSON\n3. Lọc riêng log ERROR]
+    subgraph PROCESS["⚙️ Log Processing Layer"]
+        LS[Logstash<br/>1. Receive logs from Filebeat<br/>2. Parse Grok/JSON]
     end
 
     %% =========================
     %% STORAGE LAYER
     %% =========================
     subgraph STORAGE["🗄️ Storage Layer"]
-        ES[(Elasticsearch Cluster\nCentralized Storage\nLưu kèm field 'environment')]
+        ES[(Elasticsearch Cluster<br/>Centralized Log Storage<br/>Stores environment field)]
     end
 
     %% =========================
-    %% BACKEND SERVICES (SPRING BOOT)
+    %% BACKEND SERVICES
     %% =========================
     subgraph BACKEND["🧠 Backend Services (Spring Boot)"]
-        QUERY[Query API Service\n- API Tìm kiếm log\n- Lọc theo env/app/level]
-        
-        ALERT[Alert Service\n- Nhận webhook lỗi từ LS\n- Đột biến log ERROR -> Cảnh báo]
-        
-        WS[WebSocket Gateway\n- Push log realtime ra màn hình]
+
+        QUERY[Log Query Service<br/>- Log Search API<br/>- Filter by environment/application/level]
+
+        COLLECT[Log Collection Service<br/>- Receive webhook from Logstash<br/>- Stream logs in real time]
+
+        ALERT[Alert Service<br/>- Evaluate Alert Rules<br/>- Query Elasticsearch<br/>- Push Real-Time Alerts]
+
+        WS[WebSocket Gateway<br/>- Push real-time logs<br/>- Push real-time alerts]
     end
 
     %% =========================
-    %% FRONTEND & NOTIFICATION
+    %% FRONTEND
     %% =========================
-    subgraph FRONTEND_LAYER["🖥️ UI & Notification Layer"]
-        REACT[Custom Dashboard\nReact/Vue\n- Cho Dev/Tester check nhanh\n- Chọn Môi trường để xem]
+    subgraph FRONTEND_LAYER["🖥️ Dashboard & Notification Layer"]
+        REACT[Monitoring Dashboard<br/>React<br/>- Log Viewer<br/>- Alert Notifications<br/>- Environment Selection]
     end
 
     %% =========================
-    %% FLOW DIRECTION
+    %% DATA FLOW
     %% =========================
 
-    %% Filebeat các môi trường đẩy thẳng về cổng TCP của Logstash công ty
     FB1 -->|TCP / SSL| LS
     FB2 -->|TCP / SSL| LS
     FB3 -->|TCP / SSL| LS
 
-    %% Logstash rẽ nhánh dữ liệu
-    LS -->|1. Lưu mọi log| ES
-    LS -- "2. Nếu gặp ERROR (HTTP POST)" --> ALERT
+    LS -->|1. Store All Logs| ES
+    LS -->|2. HTTP POST| COLLECT
 
-    %% Luồng Query & Hiển thị
     QUERY --> ES
     REACT --> QUERY
-    
-    %% Luồng Cảnh báo
-    ALERT --> WS
+
+    COLLECT -->|Real-Time Logs| WS
+
+    ALERT -->|Scheduled Queries| ES
+    ALERT -->|Alert Events| WS
+
     WS --> REACT
 
-    
-
+    %% =========================
+    %% COLORS
+    %% =========================
+    style SOURCES fill:#E3F2FD,stroke:#1976D2,stroke-width:2px,color:#000
+    style PROCESS fill:#FFF3E0,stroke:#F57C00,stroke-width:2px,color:#000
+    style STORAGE fill:#E8F5E9,stroke:#388E3C,stroke-width:2px,color:#000
+    style BACKEND fill:#F3E5F5,stroke:#8E24AA,stroke-width:2px,color:#000
+    style FRONTEND_LAYER fill:#E1F5FE,stroke:#0288D1,stroke-width:2px,color:#000
 ```

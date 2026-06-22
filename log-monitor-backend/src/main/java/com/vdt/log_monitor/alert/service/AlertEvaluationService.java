@@ -39,36 +39,36 @@ public class AlertEvaluationService {
      */
     public void evaluateRules() {
         for (AlertRule rule : alertRuleLoader.getRules()) {
-            // Skip disabled rules
-            if (!rule.isEnabled()) {
-                log.debug("Skipping disabled rule [{}]", rule.getId());
-                continue;
-            }
+            if (!rule.isEnabled()) continue;
 
             try {
-                // Query ES for matching log count
-                long matchedCount = alertQueryRepository.countMatchingLogs(rule);
+                // 1. Tính toán cửa sổ trượt tiêu chuẩn dựa trên cấu hình rule
+                Instant windowStart = Instant.now().minus(rule.getWindowMinutes(), java.time.temporal.ChronoUnit.MINUTES);
 
-                // Check threshold
+                // 2. Lấy mốc alert gần nhất (nếu có)
+                Instant lastTriggered = alertCooldownService.getLastTriggeredTime(rule.getId());
+
+                // 3. Nếu thời điểm alert gần nhất cũ hơn cả windowStart (tức là cooldown > window),
+                // kéo giãn windowStart về tận thời điểm alert đó để không bỏ sót khoảng trống
+                if (lastTriggered != null && lastTriggered.isBefore(windowStart)) {
+                    windowStart = lastTriggered;
+                }
+
+                // 4. Truyền mốc thời gian thông minh vào Repository để truy vấn
+                long matchedCount = alertQueryRepository.countMatchingLogs(rule, windowStart);
+
                 if (matchedCount < rule.getThreshold()) {
                     log.debug("Rule [{}]: count {} below threshold {}, no alert",
                             rule.getId(), matchedCount, rule.getThreshold());
                     continue;
                 }
 
-                // Check cooldown
-                if (!alertCooldownService.canTrigger(rule)) {
-                    log.debug("Rule [{}]: threshold exceeded ({} >= {}) but cooldown is active",
-                            rule.getId(), matchedCount, rule.getThreshold());
+                if (!alertCooldownService.tryAcquire(rule)) {
+                    log.debug("Rule [{}]: cooldown active, skip", rule.getId());
                     continue;
                 }
 
-                // Build and publish alert event
-                AlertEvent event = buildAlertEvent(rule, matchedCount);
-                alertWebSocketPublisher.publish(event);
-
-                // Update cooldown state
-                alertCooldownService.markTriggered(rule);
+                alertWebSocketPublisher.publish(buildAlertEvent(rule, matchedCount));
 
                 log.warn("ALERT TRIGGERED — Rule [{}]: {} {} logs in the last {} minutes (threshold: {})",
                         rule.getId(), matchedCount, rule.getLevel(),

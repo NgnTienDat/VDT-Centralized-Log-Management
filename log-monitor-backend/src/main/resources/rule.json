@@ -8,9 +8,9 @@
       "application": "*",
       "level": "ERROR",
       "keyword": null,
-      "threshold": 10,
-      "windowMinutes": 5,
-      "cooldownMinutes": 10,
+      "threshold": 5,
+      "windowMinutes": 3,
+      "cooldownMinutes": 5,
       "severity": "HIGH"
     }
   ]

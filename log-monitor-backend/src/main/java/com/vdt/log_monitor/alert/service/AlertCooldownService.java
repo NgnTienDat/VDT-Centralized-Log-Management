@@ -30,11 +30,11 @@ public class AlertCooldownService {
      */
     public boolean canTrigger(AlertRule rule) {
         Instant lastTriggered = lastTriggerMap.get(rule.getId());
-        if (lastTriggered == null) {
-            return true;
-        }
+        if (lastTriggered == null) return true;
+
+        Instant now = Instant.now(); // gọi 1 lần duy nhất
         Instant cooldownEnd = lastTriggered.plus(rule.getCooldownMinutes(), ChronoUnit.MINUTES);
-        return Instant.now().isAfter(cooldownEnd) || Instant.now().equals(cooldownEnd);
+        return !now.isBefore(cooldownEnd); // isAfter || isEqual, đúng chuẩn
     }
 
     /**
@@ -46,5 +46,30 @@ public class AlertCooldownService {
         lastTriggerMap.put(rule.getId(), Instant.now());
         log.debug("Cooldown updated for rule [{}]: next trigger allowed after {} minutes",
                 rule.getId(), rule.getCooldownMinutes());
+    }
+
+    public boolean tryAcquire(AlertRule rule) {
+        Instant now = Instant.now();
+        boolean[] allowed = {false};
+
+        lastTriggerMap.compute(rule.getId(), (key, lastTriggered) -> {
+            if (lastTriggered == null) {
+                allowed[0] = true;
+                return now;
+            }
+            Instant cooldownEnd = lastTriggered.plus(rule.getCooldownMinutes(), ChronoUnit.MINUTES);
+            if (!now.isBefore(cooldownEnd)) {
+                allowed[0] = true;
+                return now; // reset cooldown timer atomically
+            }
+            return lastTriggered; // còn cooldown, giữ nguyên
+        });
+
+        return allowed[0];
+    }
+
+    // Thêm hàm này vào class AlertCooldownService
+    public Instant getLastTriggeredTime(String ruleId) {
+        return lastTriggerMap.get(ruleId);
     }
 }
