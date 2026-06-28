@@ -1,17 +1,41 @@
 {
-  "rules": [
+  "ruleId": "high_error",
+  "name": "Too many errors",
+  "intervalMinutes": 1,
+  "isActive": true,
+  "lastRunTime": 0,
+  "pipelineSteps": [
     {
-      "id": "HIGH_ERROR_RATE",
-      "type": "COUNT_THRESHOLD",
-      "enabled": true,
-      "environment": "*",
-      "application": "*",
-      "level": "ERROR",
-      "keyword": null,
-      "threshold": 5,
-      "windowMinutes": 3,
-      "cooldownMinutes": 5,
-      "severity": "HIGH"
+      "id": "STEP_1",
+      "type": "FETCH_ES_DATA",
+      "params": {
+        "index": "logs",
+        "timeField": "timestamp",
+        "lookBackMinutes": 5,
+        "condition": "AND",
+        "filters": [
+          {
+            "key": "level",
+            "operator": "EQUALS",
+            "value": "ERROR"
+          },
+          {
+            "key": "service",
+            "operator": "EQUALS",
+            "value": "payment-service"
+          }
+
+        ]
+      }
+    },
+    {
+      "id": "STEP_2",
+      "type": "EVALUATE_THRESHOLD",
+      "params": {
+        "input": "STEP_1",
+        "operator": "GREATER_THAN",
+        "value": 5
+      }
     }
   ]
 }

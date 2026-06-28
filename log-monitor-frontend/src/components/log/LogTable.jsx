@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import LogRow from "./LogRow.jsx";
+import LogRowV2 from "./LogRowV2.jsx";
 
 const COLUMNS = ["TIME", "LEVEL", "ENV", "SERVICE", "MESSAGE"];
 
@@ -43,13 +44,14 @@ export default function LogTable({
                 ) : (
                     <>
                         {logs.map((log) => (
-                            <LogRow
-                                key={log.docId || log.id}
-                                log={log}
-                                onClick={onSelectLog}
-                                selected={selectedLog?.id === log.id}
-                                isDark={isDark}
-                            />
+                            // <LogRow
+                            //     key={log.docId || log.id}
+                            //     log={log}
+                            //     onClick={onSelectLog}
+                            //     selected={selectedLog?.id === log.id}
+                            //     isDark={isDark}
+                            // />
+                            <LogRowV2 key={log.docId || log.id} log={log} onClick={onSelectLog} selected={selectedLog?.id === log.id} isDark={isDark} />
                         ))}
 
                         {/* Load More Button / Loading Indicator */}

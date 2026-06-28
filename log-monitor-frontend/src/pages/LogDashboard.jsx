@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { SERVICES, formatTs } from "../utils/constants.js";
 
 import AlertBanner from "../components/alert/AlertBanner.jsx";
+import AlertMonitor from "../components/alert/AlertMonitor.jsx";
 import FilterBar from "../components/filter/FilterBar.jsx";
 import AppHeader from "../components/layout/AppHeader.jsx";
 import AppFooter from "../components/layout/AppFooter.jsx";
@@ -13,6 +14,7 @@ import { useLogQuery } from "../hooks/useLogQuery.js";
 import { useLogStream } from "../hooks/useLogStream.js";
 import { useFilterStore } from "../stores/useFilterStore.js";
 import { useServicesQuery } from "../hooks/useServiceQuery.js";
+import { useAppsQuery } from "../hooks/useAppQuery.js";
 
 export default function LogDashboard() {
     const [isDark, setIsDark] = useState(true);
@@ -28,13 +30,16 @@ export default function LogDashboard() {
         environment,
         logLevel,
         serviceName,
+        appName,
         q,
         setEnvironment,
         setLogLevel,
         setServiceName,
+        setAppName,
         setQ
     } = useFilterStore();
     const { services } = useServicesQuery();
+    const { apps } = useAppsQuery();
     const {
         logs,
         isLoading,
@@ -96,6 +101,10 @@ export default function LogDashboard() {
                 ::-webkit-scrollbar-thumb {
                 background: ${isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.12)"};
                 border-radius: 3px;
+                }
+                @keyframes slideIn {
+                    from { opacity: 0; transform: translateY(-8px); }
+                    to   { opacity: 1; transform: translateY(0); }
                 }`}
             </style>
 
@@ -108,10 +117,10 @@ export default function LogDashboard() {
             />
 
             <div className="px-6 pt-5">
-                <AlertBanner
+                {/* <AlertBanner
                     alerts={alerts}
                     onDismiss={(i) => setAlerts((prev) => prev.filter((_, idx) => idx !== i))}
-                />
+                /> */}
 
                 <StatsRow stats={stats} errorHistory={errorHistory} isDark={isDark} />
 
@@ -120,9 +129,11 @@ export default function LogDashboard() {
                     filterLevel={logLevel || "ALL"} onLevel={setLogLevel}
                     filterEnv={environment || "ALL"} onEnv={setEnvironment}
                     filterService={serviceName || "ALL"} onService={setServiceName}
+                    filterApp={appName || "ALL"} onApp={setAppName}
                     filteredCount={logs.length} totalCount={logs.length}
                     isDark={isDark}
                     services={services}
+                    apps={apps}
                 />
 
                 <div className="mt-1">
@@ -156,6 +167,9 @@ export default function LogDashboard() {
                         isDark={isDark}
                     />
                 )}
+
+                {/* ── Alert Monitor Section ── */}
+                <AlertMonitor isDark={isDark} />
 
                 <AppFooter logs={logs} isDark={isDark} />
             </div>

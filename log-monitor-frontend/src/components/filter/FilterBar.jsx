@@ -2,13 +2,16 @@ import SearchInput from "./SearchInput.jsx";
 import LevelFilter from "./LevelFilter.jsx";
 import EnvFilter from "./EnvFilter.jsx";
 import ServiceFilter from "./ServiceFilter.jsx";
+import AppFilter from "./AppFilter.jsx";
 
 export default function FilterBar({
     search, onSearch,
     filterLevel, onLevel,
     filterEnv, onEnv,
     filterService, onService,
-    services, // 🌟 NHẬN THÊM PROP SERVICES ĐỘNG Ở ĐÂY
+    filterApp, onApp,
+    services,
+    apps,
     filteredCount, totalCount,
     isDark,
 }) {
@@ -35,6 +38,13 @@ export default function FilterBar({
                     value={filterService}
                     onChange={onService}
                     services={services}
+                    isDark={isDark}
+                />
+
+                <AppFilter
+                    value={filterApp}
+                    onChange={onApp}
+                    apps={apps}
                     isDark={isDark}
                 />
 

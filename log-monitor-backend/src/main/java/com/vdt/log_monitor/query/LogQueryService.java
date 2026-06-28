@@ -136,15 +136,15 @@ public class LogQueryService {
                 .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND)));
     }
 
-    public List<String> getUniqueServices() {
+    public List<String> getUniqueServicesOrApps(String fieldName) {
 
         NativeQuery query = NativeQuery.builder()
-                .withMaxResults(0) // không lấy document
+                .withMaxResults(0)
                 .withAggregation(
-                        "services",
+                        "results",
                         Aggregation.of(a -> a
                                 .terms(t -> t
-                                        .field("service")
+                                        .field(fieldName)
                                         .size(100)
                                 )
                         )
@@ -156,9 +156,8 @@ public class LogQueryService {
         ElasticsearchAggregations aggregations =
                 (ElasticsearchAggregations) searchHits.getAggregations();
 
-        var serviceAgg = aggregations.get("services");
-
-        return serviceAgg.aggregation()
+        return aggregations.get("results")
+                .aggregation()
                 .getAggregate()
                 .sterms()
                 .buckets()

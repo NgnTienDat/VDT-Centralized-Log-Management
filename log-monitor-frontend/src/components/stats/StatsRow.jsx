@@ -9,7 +9,7 @@ export default function StatsRow({ stats, errorHistory, isDark }) {
         : "bg-white border-slate-200";
 
     return (
-        <div className="grid grid-cols-4 gap-3 mb-5">
+        <div className="grid grid-cols-3 gap-3 mb-5">
             <StatCard
                 label="Total Logs"
                 value={total}
@@ -31,12 +31,12 @@ export default function StatsRow({ stats, errorHistory, isDark }) {
                 sublabel={`${((warn / total) * 100).toFixed(1)}% of total`}
                 isDark={isDark}
             />
-            <div className={`border rounded-xl px-4 py-3.5 transition-colors duration-200 ${cardClass}`}>
+            {/* <div className={`border rounded-xl px-4 py-3.5 transition-colors duration-200 ${cardClass}`}>
                 <div className="text-[11px] text-slate-500 font-mono tracking-widest uppercase mb-1.5">
                     Error Rate (20m)
                 </div>
                 <MiniChart data={errorHistory} />
-            </div>
+            </div> */}
         </div>
     );
 }
