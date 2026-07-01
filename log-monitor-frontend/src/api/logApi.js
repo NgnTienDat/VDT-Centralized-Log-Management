@@ -71,7 +71,7 @@ export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
 
     // axiosClient interceptor đã unwrap ApiResponse → nhận thẳng phần `data`
     // Tức là response ở đây là CursorPage { data, hasMore, nextCursor, nextCursorId }
-    console.log("Fetching logs with params:", params.toString());
+    // console.log("Fetching logs with params:", params.toString());
     const response = await axiosClient.get(`/api/v1/logs?${params}`);
     return response.data;
 }
@@ -106,5 +106,11 @@ export async function fetchLogById(value, by = "doc_id") {
 export async function fetchServices() {
     // axiosClient đã unwrap ApiResponse nên nhận thẳng response.data
     const response = await axiosClient.get("/api/v1/logs/services");
+    return response.data;
+}
+
+export async function fetchApps() {
+    // axiosClient đã unwrap ApiResponse nên nhận thẳng response.data
+    const response = await axiosClient.get("/api/v1/logs/applications");
     return response.data;
 }

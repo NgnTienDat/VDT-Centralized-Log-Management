@@ -94,7 +94,7 @@ class LogQueryControllerTest {
     @DisplayName("Get unique services")
     void getServices_ShouldReturnServices() throws Exception {
 
-        when(logQueryService.getUniqueServices())
+        when(logQueryService.getUniqueServicesOrApps("service"))
                 .thenReturn(List.of(
                         "logs-service",
                         "user-service",
