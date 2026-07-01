@@ -62,7 +62,7 @@ export default function AlertMonitor({ isDark }) {
                         </p>
                     </div>
                 </div>
-{/* tesst */}
+{/* tesst */}    
                 {!selectedRuleId && (
                     <button onClick={() => setShowNewRule((p) => !p)} className="text-xs px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-500 transition-colors">
                         {showNewRule ? "Đóng" : "+ New alert rule"}
