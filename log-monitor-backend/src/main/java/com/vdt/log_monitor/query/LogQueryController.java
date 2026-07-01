@@ -58,7 +58,14 @@ public class LogQueryController {
     @GetMapping("/services")
     public ApiResponse<List<String>> getServices() {
         return ApiResponse.success(
-                logQueryService.getUniqueServices()
+                logQueryService.getUniqueServicesOrApps("service")
+        );
+    }
+
+    @GetMapping("/applications")
+    public ApiResponse<List<String>> getApplications() {
+        return ApiResponse.success(
+                logQueryService.getUniqueServicesOrApps("app")
         );
     }
 }

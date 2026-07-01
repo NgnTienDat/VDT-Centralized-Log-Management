@@ -47,8 +47,6 @@ public class LogDocument {
     @Field(name = "service", type = FieldType.Keyword)
     private String serviceName;
 
-    // Trace ID dùng để bắt cặp toàn bộ hành trình của 1 request qua các
-    // microservices
     @Field(name = "trace_id", type = FieldType.Keyword)
     private String traceId;
 
