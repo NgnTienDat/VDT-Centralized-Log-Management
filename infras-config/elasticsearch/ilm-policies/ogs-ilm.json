@@ -1,16 +1,8 @@
 {
     "policy": {
         "phases": {
-            "hot": {
-                "actions": {
-                    "rollover": {
-                        "max_age": "7d",
-                        "max_size": "5gb"
-                    }
-                }
-            },
             "delete": {
-                "min_age": "30d",
+                "min_age": "7d",
                 "actions": {
                     "delete": {}
                 }
