@@ -14,7 +14,6 @@ public class LogIngestRequest {
     private LogLevel logLevel;
     private String environment;
     private String serviceName;
-    private String appName;
     private String thread;
     private String logger;
     private String message;

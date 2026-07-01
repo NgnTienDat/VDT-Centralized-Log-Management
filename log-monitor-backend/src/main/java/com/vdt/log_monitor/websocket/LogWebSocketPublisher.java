@@ -40,29 +40,30 @@ public class LogWebSocketPublisher {
         LogMessageDto log = event.getLog();
 
         // Chuẩn hóa để tránh NullPointerException khi build topic string
-        // Tương đương với việc client subscribe /topic/logs.unknown.unknown.unknown nếu log thiếu thông tin
         String env = normalize(log.getEnvironment());
         String service = normalize(log.getServiceName());
         String level = normalize(log.getLogLevel().name());
 
-//        System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level + ", ID: " + log.getDocId());
-//        System.out.println("New Log:" + log);
+        System.out.println("ENV: " + env + ", SERVICE: " + service + ", LEVEL: " + level + ", ID: " + log.getDocId());
+        System.out.println("New Log:" + log);
 
         // 1. Topic cụ thể nhất — client filter đúng env + service + level
         // VD: /topic/logs.dev.logs-service.error
-//        String specificTopic = buildTopic(env, service, level);
-//        sendToTopic(specificTopic, log);
+        String specificTopic = buildTopic(env, service, level);
+        sendToTopic(specificTopic, log);
 
-//        String specificEnv = buildTopic(env, "all", level);
-//        sendToTopic(specificEnv, log);
+//        String testTopic = buildTopic(env, "all", level);
+//        sendToTopic(testTopic, log);
 
         // 2. Topic theo env, tất cả level
         // VD: /topic/logs.dev.all
-//        String envAllTopic = buildTopic(env, service, "all");
-//        sendToTopic(envAllTopic, log);
+        // Hữu ích khi client muốn xem tất cả log của DEV bất kể level
+        String envAllTopic = buildTopic(env, service, "all");
+        sendToTopic(envAllTopic, log);
 
         // 3. Topic tổng — tất cả env, tất cả level
         // /topic/logs.all
+        // Hữu ích cho dashboard tổng quan
         sendToTopic("/topic/logs.all", log);
     }
 

@@ -44,24 +44,11 @@ export function useLogStream(liveMode, isFetching) {
         const level = logLevel?.toLowerCase();
 
         let topic = "/topic/logs.all";
-        // if (env && service && level) {
-        //     topic = `/topic/logs.${env}.${service}.${level}`;
-        // } else if (env && service && !level) {
-        //     topic = `/topic/logs.${env}.${service}.all`;
-        // } else if (env && !service && level) {
-        //     topic = `/topic/logs.${env}.all.${level}`;
-        // } else if (!env && service && level) {
-        //     topic = `/topic/logs.all.${service}.${level}`;
-        // } else if (env && !service && !level) {
-        //     topic = `/topic/logs.${env}.all.all`;
-        // } else if (!env && service && !level) {
-        //     topic = `/topic/logs.all.${service}.all`;
-        // } else if (!env && !service && level) {
-        //     topic = `/topic/logs.all.all.${level}`;
-        // }
-
-        // let topic = `/topic/logs.${env}.${service}.${level}`;
-
+        if (env && service && level) {
+            topic = `/topic/logs.${env}.${service}.${level}`;
+        } else if (env && service && !level) {
+            topic = `/topic/logs.${env}.${service}.all`;
+        }
 
         console.log(`Computed target STOMP topic: ${topic}`);
 
@@ -74,7 +61,6 @@ export function useLogStream(liveMode, isFetching) {
             heartbeatOutgoing: 4000,
             onConnect: () => {
                 console.log(`STOMP connected! Subscribing to topic: ${topic}`);
-                console.log('----------------------------------------------------------------------');
                 subscription = client.subscribe(topic, (message) => {
                     try {
                         const rawLog = JSON.parse(message.body);
@@ -93,12 +79,14 @@ export function useLogStream(liveMode, isFetching) {
                         }
 
                         if (envMatch && levelMatch && serviceMatch && appMatch && qMatch) {
+                            // 4. Data Structuring & Mapping
+                            // Thay vì lấy rawLog.id luôn bị null, ưu tiên lấy rawLog.docId từ Logstash
                             const mappedLog = {
                                 id: rawLog.docId || rawLog.id,
                                 docId: rawLog.docId,
                                 timestamp: rawLog.eventTimestamp,
-                                level: rawLog.logLevel?.toUpperCase(),
-                                env: rawLog.environment?.toUpperCase(),
+                                level: rawLog.logLevel?.toUpperCase() || "INFO",
+                                env: rawLog.environment?.toUpperCase() || "DEV",
                                 service: rawLog.serviceName,
                                 message: rawLog.logMessage,
                                 thread: rawLog.thread,
@@ -150,7 +138,7 @@ export function useLogStream(liveMode, isFetching) {
 
         // 6. Connection Cleanup
         return () => {
-            // console.log("Cleaning up STOMP client subscription and connection...");
+            console.log("Cleaning up STOMP client subscription and connection...");
             if (subscription) {
                 subscription.unsubscribe();
             }

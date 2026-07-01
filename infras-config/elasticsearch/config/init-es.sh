@@ -11,7 +11,7 @@
 ES_URL="${1:-http://localhost:9200}"
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 TEMPLATE_FILE="$SCRIPT_DIR/../index-templates/log-template.json"
-ILM_FILE="$SCRIPT_DIR/../ilm-policies/ogs-ilm.json"
+ILM_FILE="$SCRIPT_DIR/../ilm-policies/logs-ilm.json"
 
 RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
 log_ok()   { echo -e "${GREEN}[OK]${NC}    $1"; }
@@ -32,13 +32,13 @@ echo ""; log_ok "Elasticsearch sẵn sàng."
 # -----------------------------------------------------------
 # BƯỚC 1: PUT ILM Policy
 # -----------------------------------------------------------
-log_info "Đang PUT ILM policy..."
-HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
-  -X PUT "$ES_URL/_ilm/policy/logs-ilm-policy" \
-  -H "Content-Type: application/json" -d @"$ILM_FILE")
-[ "$HTTP" -eq 200 ] \
-  && log_ok "ILM policy 'logs-ilm-policy' OK (HTTP $HTTP)" \
-  || { log_err "Thất bại HTTP $HTTP"; exit 1; }
+# log_info "Đang PUT ILM policy..."
+# HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
+#   -X PUT "$ES_URL/_ilm/policy/logs-ilm-policy" \
+#   -H "Content-Type: application/json" -d @"$ILM_FILE")
+# [ "$HTTP" -eq 200 ] \
+#   && log_ok "ILM policy 'logs-ilm-policy' OK (HTTP $HTTP)" \
+#   || { log_err "Thất bại HTTP $HTTP"; exit 1; }
 
 # -----------------------------------------------------------
 # BƯỚC 2: PUT Index Template
@@ -54,10 +54,10 @@ HTTP=$(curl -s -o /dev/null -w "%{http_code}" \
 # -----------------------------------------------------------
 # BƯỚC 3: Xác nhận
 # -----------------------------------------------------------
-echo ""
-log_info "=== ILM Policy ==="
-curl -s "$ES_URL/_ilm/policy/logs-ilm-policy" | python3 -m json.tool 2>/dev/null \
-  || curl -s "$ES_URL/_ilm/policy/logs-ilm-policy"
+# echo ""
+# log_info "=== ILM Policy ==="
+# curl -s "$ES_URL/_ilm/policy/logs-ilm-policy" | python3 -m json.tool 2>/dev/null \
+#   || curl -s "$ES_URL/_ilm/policy/logs-ilm-policy"
 
 echo ""
 log_info "=== Index Template ==="
