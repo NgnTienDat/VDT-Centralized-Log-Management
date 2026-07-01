@@ -75,3 +75,14 @@ export async function deleteRule(ruleId) {
     const response = await axiosClient.delete(`/api/v1/alerts/rules/${ruleId}`);
     return response.data;
 }
+
+/**
+ * Lấy lịch sử thông báo cảnh báo lưu trong Elasticsearch theo ruleId.
+ * Đường dẫn: /api/v1/alerts/rules/{ruleId}/notifications
+ * @param {string} ruleId
+ * @returns {Promise<Array>} Danh sách các thông báo cảnh báo
+ */
+export async function getNotificationsByRule(ruleId) {
+    const response = await axiosClient.get(`/api/v1/alerts/rules/${ruleId}/notifications`);
+    return response.data || [];
+}
