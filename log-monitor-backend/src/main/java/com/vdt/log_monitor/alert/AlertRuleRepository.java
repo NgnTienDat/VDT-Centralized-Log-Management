@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface AlertRuleRepository extends ElasticsearchRepository<RuleConfig, String> {
     List<RuleConfig> findByIsActiveTrue();
+    List<RuleConfig> findAll();
 }

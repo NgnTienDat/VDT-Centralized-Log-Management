@@ -77,7 +77,7 @@ export default function LogRowV2({ log, onClick, selected, isDark }) {
             style={{ borderLeftColor: undefined }}
         >
             {/* ── Left severity bar ── */}
-            <div className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-l-sm ${lvl.bar}`} />
+            <div className={`absolute left-0 top-0 bottom-0 w-0.75 rounded-l-sm ${lvl.bar}`} />
 
             {/* ── Content ── */}
             <div className="flex-1 min-w-0 pl-1">
@@ -127,7 +127,7 @@ export default function LogRowV2({ log, onClick, selected, isDark }) {
                 </div>
 
                 {/* Message */}
-                <div className={`font-mono text-xs leading-relaxed break-words ${lvl.msg[theme]}`}>
+                <div className={`font-mono text-xs leading-relaxed wrap-break-word ${lvl.msg[theme]}`}>
                     {log.message}
                 </div>
 

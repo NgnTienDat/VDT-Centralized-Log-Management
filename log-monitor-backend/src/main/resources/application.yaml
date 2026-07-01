@@ -4,5 +4,9 @@ server:
 spring:
   application:
     name: log-monitor-backend
+  output:
+    ansi:
+      enabled: always
+
   elasticsearch:
     uris: ${SPRING_ELASTICSEARCH_URIS:http://localhost:9200}

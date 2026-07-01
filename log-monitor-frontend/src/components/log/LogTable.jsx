@@ -20,10 +20,25 @@ export default function LogTable({
 
     return (
         <div className={`border rounded-xl overflow-hidden transition-colors duration-200 ${panelClass}`}>
-            {/* Column headers */}
-            <div
+            {/* Column headers V2 */}
+            {/* <div
                 className={`grid gap-x-3 px-3.5 py-2 border-b ${headerClass}`}
                 style={{ gridTemplateColumns: "90px 62px 88px 140px 1fr" }}
+            >
+                {COLUMNS.map((h) => (
+                    <span
+                        key={h}
+                        className="text-[10px] tracking-widest font-bold text-slate-700 uppercase font-mono"
+                    >
+                        {h}
+                    </span>
+                ))}
+            </div> */}
+
+            {/* Column headers V1 */}
+            <div 
+                className={`grid gap-x-3 px-3.5 py-2 border-b border-l-[3px] border-l-transparent ${headerClass}`}
+                style={{ gridTemplateColumns: "148px 62px 88px 140px 1fr" }}
             >
                 {COLUMNS.map((h) => (
                     <span
@@ -44,14 +59,14 @@ export default function LogTable({
                 ) : (
                     <>
                         {logs.map((log) => (
-                            // <LogRow
-                            //     key={log.docId || log.id}
-                            //     log={log}
-                            //     onClick={onSelectLog}
-                            //     selected={selectedLog?.id === log.id}
-                            //     isDark={isDark}
-                            // />
-                            <LogRowV2 key={log.docId || log.id} log={log} onClick={onSelectLog} selected={selectedLog?.id === log.id} isDark={isDark} />
+                            <LogRow
+                                key={log.docId || log.id}
+                                log={log}
+                                onClick={onSelectLog}
+                                selected={selectedLog?.id === log.id}
+                                isDark={isDark}
+                            />
+                            // <LogRowV2 key={log.docId || log.id} log={log} onClick={onSelectLog} selected={selectedLog?.id === log.id} isDark={isDark} />
                         ))}
 
                         {/* Load More Button / Loading Indicator */}

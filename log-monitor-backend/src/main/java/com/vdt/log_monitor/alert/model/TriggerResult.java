@@ -34,6 +34,9 @@ public class TriggerResult {
     private List<String> breachedGroups = List.of();
 
     @Builder.Default
+    private Map<String, Double> breachedGroupValues = new HashMap<>();
+
+    @Builder.Default
     private List<String> groupByFields = List.of();
 
     // Thông tin bổ sung riêng của từng executor (expression, operator, thresholdValue, actualValues...)

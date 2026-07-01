@@ -36,7 +36,13 @@ public class RuleConfig {
     @Field(type = FieldType.Integer)
     private Integer repeatIntervalMinutes;
 
-    // ĐĂNG KÝ THÊM: ID của step sẽ trả về kết quả Boolean quyết định việc Firing/OK
+    // Danh sách group (breachedGroups) đã được gửi thông báo ở lần gần nhất.
+    // Dùng để phát hiện "group mới breach" trong lúc đang FIRING + còn trong cooldown,
+    // để bỏ qua cooldown và báo ngay thay vì chờ tới khi repeatIntervalMinutes hết hạn.
+    // Reset về rỗng mỗi khi Rule chuyển về trạng thái OK (xem AlertSchedulerManager).
+    @Field(type = FieldType.Keyword)
+    private List<String> lastNotifiedBreachedGroups;
+
     @Field(type = FieldType.Keyword)
     private String triggerStepId;
 

@@ -57,7 +57,7 @@ public class EvaluateThresholdExecutor implements ExpressionExecutor {
                 if (val instanceof Number) {
                     metricData.put(key, ((Number) val).doubleValue());
                 }
-            }
+            } // alloo
         } else if (rawValue instanceof Number) {
             metricData.put("DEFAULT", ((Number) rawValue).doubleValue());
         } else {
@@ -66,6 +66,7 @@ public class EvaluateThresholdExecutor implements ExpressionExecutor {
 
         boolean isTriggered = false;
         List<String> breachedGroups = new ArrayList<>();
+        Map<String, Double> breachedGroupValues = new HashMap<>();
 
         for (Map.Entry<String, Double> entry : metricData.entrySet()) {
             double actualValue = entry.getValue();
@@ -74,6 +75,7 @@ public class EvaluateThresholdExecutor implements ExpressionExecutor {
             if (conditionMet) {
                 isTriggered = true;
                 breachedGroups.add(entry.getKey());
+                breachedGroupValues.put(entry.getKey(), actualValue);
             }
 
             log.info("Kiểm tra ngưỡng [{}][Group: {}]: thực tế {} {} ngưỡng {} => {}",
@@ -89,6 +91,7 @@ public class EvaluateThresholdExecutor implements ExpressionExecutor {
                 .triggered(isTriggered)
                 .breachedGroups(breachedGroups)
                 .groupByFields(groupByFields)
+                .breachedGroupValues(breachedGroupValues)
                 .metadata(metadata)
                 .build();
 

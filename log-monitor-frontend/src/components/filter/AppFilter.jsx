@@ -1,10 +1,13 @@
 export default function AppFilter({ value, onChange, apps = [], isDark }) {
+    // SỬA: Định nghĩa màu nền cố định cho option giống ServiceFilter
+    const optionCls = isDark ? "bg-[#0a0f1a] text-slate-300" : "bg-white text-slate-700";
+
     return (
         <div className="flex items-center gap-2">
             <span className="text-[11px] tracking-widest text-slate-600 uppercase">App:</span>
             <select
                 value={value}
-                onChange={(e) => onChange(e.target.value)}
+                onChange={(e) => onChange?.(e.target.value)} // SỬA: Thêm ?. bảo vệ
                 className={[
                     "rounded-md px-2.5 py-1.5 font-mono text-[11px] cursor-pointer outline-none",
                     "border transition-colors duration-200",
@@ -13,12 +16,9 @@ export default function AppFilter({ value, onChange, apps = [], isDark }) {
                         : "bg-slate-50 border-slate-300 text-slate-700",
                 ].join(" ")}
             >
-                {/* 🌟 Luôn có option mặc định để hủy filter app */}
-                <option value="ALL">ALL APPS</option>
-
-                {/* Duyệt qua danh sách apps lấy động từ API */}
+                <option value="ALL" className={optionCls}>ALL APPS</option>
                 {apps.map((app) => (
-                    <option key={app} value={app}>
+                    <option key={app} value={app} className={optionCls}>
                         {app}
                     </option>
                 ))}

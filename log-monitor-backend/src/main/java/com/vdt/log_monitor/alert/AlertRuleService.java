@@ -1,11 +1,16 @@
 package com.vdt.log_monitor.alert;
 
+import com.vdt.log_monitor.alert.dto.UpdateRuleRequest;
 import com.vdt.log_monitor.alert.enums.AlertState;
 import com.vdt.log_monitor.alert.model.RuleConfig;
 import com.vdt.log_monitor.alert.scheduler.AlertSchedulerManager;
+import com.vdt.log_monitor.common.exception.AppException;
+import com.vdt.log_monitor.common.exception.ErrorCode;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -14,6 +19,15 @@ public class AlertRuleService {
 
     private final AlertRuleRepository ruleRepository;
     private final AlertSchedulerManager schedulerManager;
+
+    public List<RuleConfig> getAllRules() {
+        return ruleRepository.findAll();
+    }
+
+    public RuleConfig getRuleById(String ruleId) {
+        return ruleRepository.findById(ruleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ALERT_RULE_NOT_FOUND));
+    }
 
     public RuleConfig createRule(RuleConfig ruleConfig) {
         ruleConfig.setRuleId(UidGenerator.generateUid());
@@ -26,40 +40,53 @@ public class AlertRuleService {
         ruleConfig.setLastNotifiedTime(0L);
 
         RuleConfig savedRule = ruleRepository.save(ruleConfig);
-
         schedulerManager.scheduleRule(savedRule);
 
         return savedRule;
     }
 
-    // 2. SỬA RULE (Thay đổi chu kỳ interval, bộ lọc, hoặc Bật/Tắt)
-    public RuleConfig updateRule(String ruleId, RuleConfig updatedConfig) {
-        RuleConfig existingRule = ruleRepository.findById(ruleId)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy Rule với ID: " + ruleId));
+    public RuleConfig patchRule(String ruleId, UpdateRuleRequest request) {
+        RuleConfig existing = ruleRepository.findById(ruleId)
+                .orElseThrow(() -> new AppException(ErrorCode.ALERT_RULE_NOT_FOUND));
 
-        existingRule.setName(updatedConfig.getName());
-        existingRule.setIntervalMinutes(updatedConfig.getIntervalMinutes());
-        existingRule.setIsActive(updatedConfig.getIsActive());
-        existingRule.setPipelineSteps(updatedConfig.getPipelineSteps());
-
-        RuleConfig savedRule = ruleRepository.save(existingRule);
-
-        // TỰ ĐỘNG CẬP NHẬT LẠI ĐỒNG HỒ THEO CẤU HÌNH MỚI (Hủy lịch cũ, lên lịch mới)
-        schedulerManager.scheduleRule(savedRule);
-
-        return savedRule;
-    }
-
-    // 3. XÓA RULE
-    public void deleteRule(String ruleId) {
-        if (!ruleRepository.existsById(ruleId)) {
-            throw new RuntimeException("Không tìm thấy Rule với ID: " + ruleId);
+        // Chỉ ghi đè field nào được gửi lên (khác null)
+        if (request.getName() != null) {
+            existing.setName(request.getName().strip());
+        }
+        if (request.getIntervalMinutes() != null) {
+            existing.setIntervalMinutes(request.getIntervalMinutes());
+        }
+        if (request.getIsActive() != null) {
+            existing.setIsActive(request.getIsActive());
+        }
+        if (request.getRepeatIntervalMinutes() != null) {
+            existing.setRepeatIntervalMinutes(request.getRepeatIntervalMinutes());
+        }
+        if (request.getTriggerStepId() != null) {
+            existing.setTriggerStepId(request.getTriggerStepId());
+        }
+        if (request.getPipelineSteps() != null) {
+            existing.setPipelineSteps(request.getPipelineSteps());
+        }
+        if (request.getNotificationTemplate() != null) {
+            existing.setNotificationTemplate(request.getNotificationTemplate());
         }
 
-        // Gỡ bỏ đồng hồ hẹn giờ ra khỏi Thread Pool trước khi xóa khỏi Database
-        schedulerManager.cancelRule(ruleId);
+        RuleConfig savedRule = ruleRepository.save(existing);
+        schedulerManager.scheduleRule(savedRule);
 
+        log.info("Cập nhật thành công Rule ID: {}", ruleId);
+        return savedRule;
+    }
+
+    public void deleteRule(String ruleId) {
+        if (!ruleRepository.existsById(ruleId)) {
+            throw new AppException(ErrorCode.ALERT_RULE_NOT_FOUND);
+        }
+
+        schedulerManager.cancelRule(ruleId);
         ruleRepository.deleteById(ruleId);
+
         log.info("Xóa thành công Rule ID: {} khỏi hệ thống.", ruleId);
     }
 }

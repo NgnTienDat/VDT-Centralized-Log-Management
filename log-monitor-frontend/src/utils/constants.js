@@ -1,5 +1,5 @@
 export const ENVIRONMENTS = ["ALL", "DEV", "STAGING", "TEST", "PROD"];
-export const LOG_LEVELS = ["ALL", "INFO", "WARN", "ERROR", "DEBUG"];
+export const LOG_LEVELS = ["INFO", "WARN", "ERROR", "DEBUG"];
 export const SERVICES = [
   "ALL",
   "auth-service",
