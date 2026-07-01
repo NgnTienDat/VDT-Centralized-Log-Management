@@ -2,10 +2,12 @@ package com.vdt.log_monitor.alert.scheduler;
 
 import com.vdt.log_monitor.alert.engine.ExpressionEngine;
 import com.vdt.log_monitor.alert.enums.AlertState;
+import com.vdt.log_monitor.alert.model.AlertNotificationDocument;
 import com.vdt.log_monitor.alert.model.ExpressionResult;
 import com.vdt.log_monitor.alert.model.PipelineResult;
 import com.vdt.log_monitor.alert.model.RuleConfig;
 import com.vdt.log_monitor.alert.model.TriggerResult;
+import com.vdt.log_monitor.alert.AlertNotificationRepository;
 import com.vdt.log_monitor.alert.AlertRuleRepository;
 import com.vdt.log_monitor.websocket.AlertNotificationPayload;
 import com.vdt.log_monitor.websocket.AlertPublisher;
@@ -28,6 +30,7 @@ public class AlertSchedulerManager {
     private final ThreadPoolTaskScheduler alertTaskScheduler;
     private final ExpressionEngine expressionEngine;
     private final AlertRuleRepository ruleRepository;
+    private final AlertNotificationRepository notificationRepository;
     private final AlertPublisher alertPublisher;
 
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
@@ -114,6 +117,10 @@ public class AlertSchedulerManager {
                         if (triggerResult != null) {
                             // printTriggerResultAndNotification(rule, pipelineResult);
                             publishAlertNotification(rule, triggerResult, now);
+
+                            
+
+
                         }
                     } else {
                         log.info(
@@ -271,7 +278,30 @@ public class AlertSchedulerManager {
                 .build();
 
         System.out.println("📢 [ALERT NOTIFICATION PAYLOAD] " + payload.toString());
-        alertPublisher.publish(payload);
+
+        try {
+            AlertNotificationDocument doc = AlertNotificationDocument.builder()
+                    .ruleId(payload.getRuleId())
+                    .ruleName(payload.getRuleName())
+                    .triggerStepId(payload.getTriggerStepId())
+                    .alertState(payload.getAlertState())
+                    .triggered(payload.isTriggered())
+                    .breachedGroups(payload.getBreachedGroups())
+                    .breachedGroupValues(payload.getBreachedGroupValues())
+                    .groupByFields(payload.getGroupByFields())
+                    .title(payload.getTitle())
+                    .message(payload.getMessage())
+                    .timestamp(payload.getTimestamp())
+                    .build();
+            
+            notificationRepository.save(doc);
+            log.debug("💾 Đã lưu log alert notification đầy đủ vào ES cho ruleId: {}", rule.getRuleId());
+
+            alertPublisher.publish(payload);
+            log.debug("📤 Đã publish alert notification qua WebSocket cho ruleId: {}", rule.getRuleId());
+        } catch (Exception e) {
+            log.error("❌ Lỗi khi lưu alert notification vào Elasticsearch: ", e);
+        }
     }
 
     private String renderTemplate(String template, RuleConfig rule, TriggerResult triggerResult) {

@@ -1,10 +1,13 @@
 package com.vdt.log_monitor.alert;
 
 import com.vdt.log_monitor.alert.dto.UpdateRuleRequest;
+import com.vdt.log_monitor.alert.model.AlertNotificationDocument;
 import com.vdt.log_monitor.alert.model.RuleConfig;
 import com.vdt.log_monitor.common.dto.ApiResponse;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +20,7 @@ import java.util.List;
 public class AlertRuleController {
 
     private final AlertRuleService alertRuleService;
+    private final AlertNotificationRepository notificationRepository;
 
     @PostMapping
     public ResponseEntity<ApiResponse<RuleConfig>> createRule(
@@ -47,8 +51,13 @@ public class AlertRuleController {
         return ResponseEntity.ok(ApiResponse.success(null));
     }
 
-    @GetMapping("/health")
-    public ResponseEntity<ApiResponse<String>> healthCheck() {
-        return ResponseEntity.ok(ApiResponse.success("AlertRuleController is healthy"));
+    @GetMapping("/{ruleId}/notifications")
+    public ResponseEntity<ApiResponse<List<AlertNotificationDocument>>> getNotificationsByRule(
+            @PathVariable String ruleId) {
+
+        List<AlertNotificationDocument> notifications =
+                notificationRepository.findByRuleIdOrderByTimestampDesc(ruleId);
+
+        return ResponseEntity.ok(ApiResponse.success(notifications));
     }
 }

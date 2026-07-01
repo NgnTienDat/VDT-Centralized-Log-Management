@@ -20,9 +20,9 @@ export default function AppHeader({ isDark, onToggleTheme }) {
                     title={isDark ? "Switch to Light mode" : "Switch to Dark mode"}
                     className={`flex items-center gap-2 border rounded-lg px-3 py-1.5 cursor-pointer font-mono text-[11px] tracking-wider transition-all duration-200 ${themeButtonClass}`}
                 >
-                    <span className="text-base leading-none">{isDark ? "☀️" : "🌙"}</span>
+                    {/* <span className="text-base leading-none">{isDark ? "☀️" : "🌙"}</span> */}
                     <span className={isDark ? "text-slate-400" : "text-slate-500"}>
-                        {isDark ? "LIGHT" : "DARK"}
+                        {isDark ? "Light" : "Dark"} Mode
                     </span>
                 </button>
 

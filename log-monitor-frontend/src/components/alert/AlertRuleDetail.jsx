@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { useAlerts, useAlertRule } from "../../hooks/useAlerts";
+import { useAlertNotifications, usePrependNotification } from "../../hooks/useAlertNotifications";
 import NewAlertRule from "./NewAlertRule";
 import AlertNotification from "./AlertNotification";
 
@@ -8,7 +9,7 @@ import AlertNotification from "./AlertNotification";
 // Không cần sửa bất kỳ logic nào khác.
 const TABS = [
     { id: "overview", label: "Tổng quan" },
-    { id: "notifications", label: "Thông báo" },
+    { id: "notifications", label: "Cảnh báo" },
     // { id: "history", label: "Lịch sử" }, // import AlertHistory rồi uncomment
 ];
 
@@ -36,23 +37,23 @@ function formatTimestamp(ts) {
 
 export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
     const { data: ruleResult, isLoading, isError } = useAlertRule(ruleId);
+    const { data: notifications = [], isLoading: isLoadingNotifications } = useAlertNotifications(ruleId);
+    const prependNotification = usePrependNotification();
 
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState("overview");
-    const [notifications, setNotifications] = useState([]);
 
-    // onAlert: lọc theo ruleId, chỉ lưu tối đa 50 thông báo gần nhất.
-    // Dùng ref pattern của useAlerts nên callback stable — không reconnect WS.
+    // onAlert: lọc theo ruleId và prepend vào cache để UI realtime mà không dùng state cục bộ.
     const onAlert = useCallback(
         (data) => {
             if (data.ruleId !== ruleId) return;
-            setNotifications((prev) => [data, ...prev].slice(0, 50));
+            prependNotification(ruleId, data);
         },
-        [ruleId]
+        [prependNotification, ruleId]
     );
 
     // useAlerts đã tạo WS connection ở AlertMonitor; gọi ở đây chỉ tái dùng
-    // mutation/query cache — STOMP client mới nhưng chấp nhận được cho v1.
+    // mutation/query cache.
     const { refetchRules } = useAlerts(onAlert);
 
     const rule = ruleResult?.data || ruleResult;
@@ -336,7 +337,13 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
 
             {/* Tab: Thông báo */}
             {activeTab === "notifications" && (
-                <AlertNotification notifications={notifications} isDark={isDark} />
+                isLoadingNotifications ? (
+                    <div className="p-4 text-xs text-slate-400 animate-pulse">
+                        Đang tải lịch sử thông báo...
+                    </div>
+                ) : (
+                    <AlertNotification notifications={notifications} isDark={isDark} />
+                )
             )}
 
             {/* Thêm tab mới ở đây, ví dụ:
