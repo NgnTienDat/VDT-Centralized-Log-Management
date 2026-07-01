@@ -10,7 +10,30 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-
+/**
+ * Nhận LogIngestRequest từ controller, map sang LogMessageDto,
+ * rồi publish LogIngestedEvent vào Spring event bus.
+ *
+ * Tại sao dùng ApplicationEvent thay vì gọi trực tiếp?
+ *
+ * Nếu gọi thẳng:
+ * collector → websocket (import trực tiếp) — vi phạm feature boundary
+ * collector → alert (import trực tiếp) — vi phạm feature boundary
+ *
+ * Dùng event:
+ * collector → publish(LogIngestedEvent) — chỉ biết common/dto
+ * websocket ← @EventListener — tự subscribe
+ * alert ← @EventListener — tự subscribe
+ *
+ * ┌─────────────────────┐
+ * LogCollectorService │ publishEvent(dto) │
+ * └──────────┬──────────┘
+ * │ Spring Event Bus
+ * ┌───────────┴────────────┐
+ * ▼ ▼
+ * LogWebSocketPublisher AlertEvaluator
+ * (broadcast STOMP) (check rule engine)
+ */
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -31,7 +54,7 @@ public class LogCollectorService {
             // LogWebSocketPublisher.onLogIngested() → broadcast STOMP
             // AlertEvaluator.onLogIngested() → check alert rule
             eventPublisher.publishEvent(new LogIngestedEvent(this, dto));
-            log.info("DTO doc ID: {}, {}", dto.getDocId(), dto.getLogLevel());
+            log.info("DTO doc ID: {}", dto.getDocId());
 //            log.debug("Event published — traceId: {}, level: {}, service: {}",
 //                    dto.getTraceId(), dto.getLogLevel(), dto.getServiceName());
 

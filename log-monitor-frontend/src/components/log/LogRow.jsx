@@ -25,7 +25,7 @@ export default function LogRow({ log, onClick, selected, isDark }) {
             onClick={() => onClick(log)}
             className={`${rowBase} ${rowBg} ${isDark ? "border-b-white/4" : "border-b-slate-100"}`}
             style={{
-                gridTemplateColumns: "148px 62px 88px 140px 1fr",
+                gridTemplateColumns: "90px 62px 88px 140px 1fr",
                 borderLeftColor: selected ? lvl.hex : "transparent",
             }}
         >

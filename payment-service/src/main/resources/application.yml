@@ -1,5 +1,0 @@
-logging:
-  file:
-    name: ./logs/system.log
-server:
-  port: 8083
