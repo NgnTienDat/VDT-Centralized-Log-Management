@@ -46,4 +46,9 @@ public class AlertRuleController {
         alertRuleService.deleteRule(ruleId);
         return ResponseEntity.ok(ApiResponse.success(null));
     }
+
+    @GetMapping("/health")
+    public ResponseEntity<ApiResponse<String>> healthCheck() {
+        return ResponseEntity.ok(ApiResponse.success("AlertRuleController is healthy"));
+    }
 }

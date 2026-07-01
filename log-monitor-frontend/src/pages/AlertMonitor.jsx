@@ -58,11 +58,11 @@ export default function AlertMonitor({ isDark }) {
                             Alert <span className="text-violet-400">Rules</span>
                         </h2>
                         <p className={`text-[10px] ${isDark ? "text-slate-500" : "text-slate-400"}`}>
-                            {rules.length} rule{rules.length !== 1 ? "s" : ""}
+                            {rules.length} rule{rules.length !== 1 ? "s" : ""}     
                         </p>
                     </div>
                 </div>
-
+{/* tesst */}
                 {!selectedRuleId && (
                     <button onClick={() => setShowNewRule((p) => !p)} className="text-xs px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-500 transition-colors">
                         {showNewRule ? "Đóng" : "+ New alert rule"}
