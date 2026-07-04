@@ -56,10 +56,10 @@ export default function LogDashboard({ isDark }) {
             : "bg-emerald-50 border-emerald-300 text-emerald-700 hover:bg-emerald-100";
 
     return (
-        <div className="flex flex-col gap-5">
-            <div className="flex items-center justify-between border-b pb-3 border-slate-200 dark:border-white/5">
+        <div className="flex flex-col gap-1">
+            <div className="flex items-center justify-between border-b pb-1 border-slate-200 dark:border-white/5">
                 <div>
-                    <h2 className="text-base font-bold tracking-tight text-slate-800 dark:text-slate-100">
+                    <h2 className="text-base font-bold tracking-tight text-slate-500 dark:text-slate-400">
                         Logs Stream Explorer
                     </h2>
                     <p className="text-xs text-slate-400 mt-0.5">

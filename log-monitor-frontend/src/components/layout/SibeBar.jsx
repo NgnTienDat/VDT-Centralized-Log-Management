@@ -6,7 +6,7 @@ export default function SideBar({ activeTab, setActiveTab, isDark }) {
 
     const menuItems = [
         { id: "logs", label: "Logs Explorer" },
-        { id: "alerts", label: "Alert Manager" },
+        { id: "alerts", label: "Alert Rules" },
     ];
 
     return (

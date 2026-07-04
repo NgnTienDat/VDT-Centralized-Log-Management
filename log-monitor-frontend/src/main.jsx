@@ -34,7 +34,7 @@ createRoot(document.getElementById("root")).render(
     <QueryClientProvider client={queryClient}>
       <App />
       {/* DevTools chỉ hiện ở môi trường dev — tự ẩn khi build production */}
-      <ReactQueryDevtools initialIsOpen={false} />
+      {/* <ReactQueryDevtools initialIsOpen={true} /> */}
     </QueryClientProvider>
   </StrictMode>
 );

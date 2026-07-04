@@ -36,7 +36,7 @@ export default function StatsRow({ stats, errorHistory, isDark }) {
 
             {/* FIX 2: Mở khóa block MiniChart và cấu trúc lại style gọn gàng */}
             <div className={`border rounded-xl px-4 py-3.5 transition-colors duration-200 flex flex-col justify-between ${cardClass}`}>
-                <div className="text-[11px] text-slate-500 font-mono tracking-widest uppercase mb-2">
+                <div className="text-[11px] text-slate-600 font-mono tracking-widest uppercase mb-2">
                     Error Rate Trend
                 </div>
 
@@ -44,7 +44,7 @@ export default function StatsRow({ stats, errorHistory, isDark }) {
                     <MiniChart data={errorHistory} />
                 </div>
 
-                <div className="text-[10px] text-slate-400 font-mono mt-2 flex justify-between items-center border-t border-slate-100 dark:border-white/5 pt-1.5">
+                <div className="text-[10px] text-slate-600 font-mono mt-2 flex justify-between items-center border-t border-slate-100 dark:border-white/5 pt-1.5">
                     <span>Timeline intervals</span>
                     <span className="text-rose-500 font-semibold animate-pulse flex items-center gap-0.5">
                         ● LIVE

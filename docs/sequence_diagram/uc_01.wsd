@@ -1,0 +1,67 @@
+@startuml diagram
+box "Application" #LightGreen
+    participant "Application Service" as APP
+end box
+
+box "Log Ingestion & Processing" #LightBlue
+    participant "Filebeat" as FB
+    participant "Logstash" as LS
+    database "Elasticsearch" as ES
+end box
+
+box "Backend" #LightYellow
+    participant "Collector Backend" as BE
+end box
+
+box "Client" #LightGreen
+    participant "UI / Frontend" as UI
+end box
+
+== Bước 1: Sinh log ==
+
+APP -> APP: Ghi log\nvào file
+
+== Bước 2: Thu thập & Chuẩn hóa Log ==
+
+FB -> FB: Đọc file log và gộp \nstacktrace nhiều dòng
+FB -> LS: Chuyển tiếp log qua \nBeats Protocol (Cổng 5044)
+
+activate LS
+
+LS -> LS: Áp dụng Grok Filter để bóc tách trường\n(timestamp, level, trace_id, message...)
+LS -> LS: Chuẩn hóa dữ liệu log
+
+== Bước 3: Lưu trữ & Chuyển tiếp ==
+
+par Luồng lưu trữ và luồng phân phối hoạt động độc lập
+
+    LS -> ES: Lưu log vào Elasticsearch
+
+else Luồng gửi Backend
+
+    LS -> BE: HTTP POST log về backend
+
+    activate BE
+
+    BE --> LS: 202 Accepted
+
+    deactivate LS
+
+end
+
+== Bước 4: Xử lý bất đồng bộ & Phát tán Real-time ==
+
+activate BE
+
+note over BE
+Xử lý bất đồng bộ:
+- Kiểm tra dữ liệu log
+- Chuẩn hóa thông tin
+- Xác định kênh phân phối
+end note
+
+BE -> UI: Broadcast realtime
+
+deactivate BE
+
+@enduml

@@ -4,7 +4,7 @@ export default function ServiceFilter({ value, onChange, services = [], isDark }
 
     return (
         <div className="flex items-center gap-2">
-            <span className="text-[11px] tracking-widest text-slate-600 uppercase">Service:</span>
+            <span className="text-[11px] tracking-widest text-slate-700 uppercase">Service:</span>
             <select
                 value={value}
                 onChange={(e) => onChange?.(e.target.value)} // SỬA: Thêm ?. bảo vệ
@@ -13,7 +13,7 @@ export default function ServiceFilter({ value, onChange, services = [], isDark }
                     "border transition-colors duration-200",
                     isDark
                         ? "bg-white/4 border-white/8 text-slate-300"
-                        : "bg-slate-50 border-slate-300 text-slate-700",
+                        : "bg-slate-50 border-slate-300 text-slate-800",
                 ].join(" ")}
             >
                 <option value="ALL" className={optionCls}>ALL SERVICES</option>

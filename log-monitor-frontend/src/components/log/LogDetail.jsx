@@ -85,11 +85,11 @@ export default function LogDetail({ log, onClose, isDark }) {
                     </span>
                     <div className="flex items-center gap-3">
                         {isLoading && (
-                            <span className="text-slate-600 text-[11px]">loading full detail…</span>
+                            <span className="text-slate-700 text-[11px]">loading full detail…</span>
                         )}
                         <button
                             onClick={onClose}
-                            className="bg-transparent border-none text-slate-500 cursor-pointer text-xl leading-none px-1 hover:text-slate-300 transition-colors"
+                            className="bg-transparent border-none text-slate-600 cursor-pointer text-xl leading-none px-1 hover:text-slate-900 transition-colors"
                         >
                             ×
                         </button>
@@ -115,7 +115,7 @@ export default function LogDetail({ log, onClose, isDark }) {
                                 className={`grid gap-2 mb-2 border-b pb-2 ${rowDivider}`}
                                 style={{ gridTemplateColumns: "110px 1fr" }}
                             >
-                                <span className="text-slate-600">{key}</span>
+                                <span className="text-slate-700">{key}</span>
                                 <span className="break-all" style={{ color: valueColor(key) }}>
                                     {value}
                                 </span>
@@ -126,7 +126,7 @@ export default function LogDetail({ log, onClose, isDark }) {
                     {/* Stack trace — chỉ có trong full detail, không có ở row tóm tắt */}
                     {view.stackTrace && (
                         <div className="mt-3">
-                            <div className="text-slate-600 mb-1.5">stackTrace</div>
+                            <div className="text-slate-700 mb-1.5">stackTrace</div>
                             <pre
                                 className={`whitespace-pre-wrap break-all rounded-lg p-3 text-[11px] leading-relaxed overflow-x-auto ${isDark ? "bg-black/30 text-red-300" : "bg-red-50 text-red-700"
                                     }`}
