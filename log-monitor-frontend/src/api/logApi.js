@@ -57,7 +57,7 @@ function buildParams(raw) {
  *   beforeId là _id của document cuối — ES dùng nó như tie-breaker để
  *   đảm bảo kết quả deterministic.
  */
-export async function fetchLogs(filters = {}, cursor = undefined, size = 10) {
+export async function fetchLogs(filters = {}, cursor = undefined, size = 5) {
     const params = buildParams({
         environment: filters.environment?.toLocaleLowerCase(),
         appName: filters.appName,

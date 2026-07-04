@@ -42,7 +42,7 @@ export default function SearchInput({ value, onChange, isDark }) {
                     "border transition-colors duration-200",
                     isDark
                         ? "bg-white/4 border-white/8 text-slate-200 placeholder-slate-600 focus:border-white/20"
-                        : "bg-white border-slate-200 text-slate-800 placeholder-slate-400 focus:border-indigo-500",
+                        : "bg-white border-slate-200 text-slate-900 placeholder-slate-500 focus:border-indigo-500",
                 ].join(" ")}
             />
         </div>

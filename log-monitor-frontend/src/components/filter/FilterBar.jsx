@@ -48,7 +48,7 @@ export default function FilterBar({
                     isDark={isDark}
                 />
 
-                <span className="ml-auto text-[11px] text-slate-600 font-mono">
+                <span className="ml-auto text-[11px] text-slate-700 font-mono">
                     Showing{" "}
                     <span className={isDark ? "text-sky-400" : "text-sky-600"}>{filteredCount}</span>
                     {" / "}

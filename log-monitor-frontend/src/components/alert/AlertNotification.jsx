@@ -66,9 +66,9 @@ export default function AlertNotification({ notifications = [], isDark }) {
                     <div key={idx} className={`rounded-lg border p-3.5 flex flex-col gap-2.5 ${bgCard}`}>
                         {/* Row 1: alertState badge + timestamp */}
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                            <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${stateBadgeCls}`}>
+                            {/* <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${stateBadgeCls}`}>
                                 {notif.alertState}
-                            </span>
+                            </span> */}
                             <span className={`text-[10px] font-mono ${textMuted}`}>
                                 🕐 {formatVnTime(notif.timestamp)}
                             </span>

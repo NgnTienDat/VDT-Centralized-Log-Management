@@ -30,7 +30,7 @@ export default function LogRow({ log, onClick, selected, isDark }) {
             }}
         >
             {/* Timestamp */}
-            <span className="font-mono text-[11px] text-slate-600 whitespace-nowrap">
+            <span className="font-mono text-[11px] text-slate-700 whitespace-nowrap">
                 {formatTs(log.timestamp)}
             </span>
 
@@ -57,7 +57,7 @@ export default function LogRow({ log, onClick, selected, isDark }) {
             </span>
 
             {/* Service */}
-            <span className="font-mono text-[11px] text-slate-600 whitespace-nowrap overflow-hidden text-ellipsis">
+            <span className="font-mono text-[11px] text-slate-700 whitespace-nowrap overflow-hidden text-ellipsis">
                 {log.service}
             </span>
 

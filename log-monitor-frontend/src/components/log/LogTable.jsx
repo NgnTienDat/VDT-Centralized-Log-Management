@@ -53,7 +53,7 @@ export default function LogTable({
             {/* Rows */}
             <div ref={listRef} className="max-h-120 overflow-y-auto">
                 {logs.length === 0 ? (
-                    <div className="py-10 text-center text-slate-600 text-sm font-mono">
+                    <div className="py-10 text-center text-slate-700 text-sm font-mono">
                         No logs match current filters
                     </div>
                 ) : (
