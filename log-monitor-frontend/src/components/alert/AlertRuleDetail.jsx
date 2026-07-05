@@ -127,13 +127,13 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
     const notifBadge = notifications.length;
 
     return (
-        <div className={`rounded-xl p-5 flex flex-col gap-5 transition-all ${bgContainer}`}>
+        <div className={`alert-rule-detail-scope rounded-xl p-5 flex flex-col gap-5 transition-all ${bgContainer}`}>
             {/* ── 1. HEADER ── */}
             <div className={`flex items-start justify-between border-b pb-4 ${borderSubtle}`}>
                 <div className="flex flex-col gap-1.5">
                     <button
                         onClick={onClose}
-                        className={`text-xs w-fit font-medium hover:underline flex items-center gap-1 ${textMuted}`}
+                        className={`text-xs w-fit font-medium hover:underline flex items-center gap-1 whitespace-nowrap ${textMuted}`}
                     >
                         ← Danh sách rule
                     </button>
@@ -153,7 +153,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
 
                 <button
                     onClick={() => setIsEditing(true)}
-                    className="text-xs px-3.5 py-1.5 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-500 shadow-sm transition-colors"
+                    className="text-xs px-3.5 py-1.5 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-500 shadow-sm transition-colors whitespace-nowrap"
                 >
                     Chỉnh sửa (Edit)
                 </button>
@@ -161,7 +161,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
 
             {/* ── TAB BAR ── */}
             {/* Thêm tab: push vào TABS ở trên, thêm case ở TAB CONTENT bên dưới */}
-            <div className={`flex items-center border-b -mt-2 ${borderSubtle}`}>
+            <div className={`flex items-center flex-wrap gap-1 border-b -mt-2 ${borderSubtle}`}>
                 {TABS.map((tab) => {
                     const isActive = activeTab === tab.id;
                     const badge = tab.id === "notifications" ? notifBadge : 0;
@@ -170,7 +170,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                             key={tab.id}
                             onClick={() => setActiveTab(tab.id)}
                             className={[
-                                "flex items-center gap-1.5 text-xs px-4 py-2.5 font-medium",
+                                "flex items-center gap-1.5 text-xs px-4 py-2.5 font-medium whitespace-nowrap",
                                 "border-b-2 -mb-px transition-colors",
                                 isActive
                                     ? `border-indigo-500 ${isDark ? "text-indigo-400" : "text-indigo-600"}`

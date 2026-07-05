@@ -264,7 +264,7 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
     const cardCls = isDark ? "bg-[#0a0f1a] border-white/10 text-slate-200" : "bg-white border-slate-350 text-slate-900 shadow-md";
 
     return (
-        <div className={`rounded-2xl p-5 flex flex-col gap-6 ${cardCls}`}>
+        <div className={`alert-rule-detail-scope rounded-2xl p-5 flex flex-col gap-6 ${cardCls}`}>
             <div className="flex items-center justify-between">
                 <h3 className={`text-sm font-bold ${isDark ? "text-slate-200" : "text-slate-900"}`}>Create New Rule</h3>
                 <button onClick={onClose} className={`text-xs px-2 py-1 rounded-lg ${isDark ? "hover:bg-white/10 text-slate-400" : "hover:bg-slate-100 text-slate-500"}`}>✕</button>

@@ -38,7 +38,7 @@ export default function AlertNotification({ notifications = [], isDark }) {
     }
 
     return (
-        <div className="flex flex-col gap-3">
+        <div className="alert-rule-detail-scope flex flex-col gap-3">
             <p className={`text-[11px] ${textMuted}`}>
                 {notifications.length} thông báo · mới nhất ở trên cùng
             </p>
