@@ -4,6 +4,7 @@ import com.vdt.log_monitor.common.dto.LogIngestedEvent;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import java.time.Instant;
 import org.springframework.context.event.EventListener;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Async;
@@ -38,6 +39,7 @@ public class LogWebSocketPublisher {
     @EventListener
     public void onLogIngested(LogIngestedEvent event) {
         LogMessageDto log = event.getLog();
+        log.setSentTimestamp(Instant.now());
 
         // Chuẩn hóa để tránh NullPointerException khi build topic string
         // Tương đương với việc client subscribe /topic/logs.unknown.unknown.unknown nếu log thiếu thông tin

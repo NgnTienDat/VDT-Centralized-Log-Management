@@ -30,7 +30,7 @@ public class LogGeneratorService {
         task = scheduler.scheduleAtFixedRate(
                 this::generateLog,
                 0,
-                5,
+                1,
                 TimeUnit.SECONDS);
 
         log.info("Log generator started");
