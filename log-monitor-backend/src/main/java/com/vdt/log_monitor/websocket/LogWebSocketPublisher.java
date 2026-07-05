@@ -38,7 +38,7 @@ public class LogWebSocketPublisher {
     @Async
     @EventListener
     public void onLogIngested(LogIngestedEvent event) {
-        LogMessageDto log = event.getLog();
+        LogMessageDto log = event.getLog(); // tesst
         log.setSentTimestamp(Instant.now());
 
         // Chuẩn hóa để tránh NullPointerException khi build topic string
