@@ -14,6 +14,9 @@ const FIELDS = [
     ["thread", (log) => log.thread],
     ["traceId", (log) => log.traceId],
     ["message", (log) => log.message],
+    ["sentTimestamp", (log) => log.sentTimestamp],
+    ["receivedTimestamp", (log) => log.receivedTimestamp],
+    ["deliveryLatencyMs", (log) => log.deliveryLatencyMs != null ? `${log.deliveryLatencyMs}ms` : null],
 ];
 
 export default function LogDetail({ log, onClose, isDark }) {

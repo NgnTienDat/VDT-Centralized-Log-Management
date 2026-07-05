@@ -33,6 +33,8 @@ public class LogMessageDto {
     private String traceId;      // xuyên suốt 1 request qua nhiều service
     private String thread;
     private String logMessage;   // main message đã tách stack trace (nếu có)
+    private Instant sentTimestamp;   // thời điểm backend publish message ra STOMP
     private Long durationMs;     // null với log không phải request log
     private String stackTrace;
+
 }

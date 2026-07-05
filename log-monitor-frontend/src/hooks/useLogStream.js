@@ -78,6 +78,9 @@ export function useLogStream(liveMode, isFetching) {
                 subscription = client.subscribe(topic, (message) => {
                     try {
                         const rawLog = JSON.parse(message.body);
+                        const receivedTimestamp = new Date().toISOString();
+                        const sentTimestamp = rawLog.sentTimestamp || rawLog.eventTimestamp || null;
+                        const deliveryLatencyMs = sentTimestamp ? Math.max(0, Date.now() - new Date(sentTimestamp).getTime()) : null;
 
                         // 3. Client-Side Fallback Matching (Hybrid Filtering)
                         const envMatch = !environment || rawLog.environment?.toUpperCase() === environment.toUpperCase();
@@ -97,6 +100,9 @@ export function useLogStream(liveMode, isFetching) {
                                 id: rawLog.docId || rawLog.id,
                                 docId: rawLog.docId,
                                 timestamp: rawLog.eventTimestamp,
+                                sentTimestamp,
+                                receivedTimestamp,
+                                deliveryLatencyMs,
                                 level: rawLog.logLevel?.toUpperCase(),
                                 env: rawLog.environment?.toUpperCase(),
                                 service: rawLog.serviceName,

@@ -132,12 +132,13 @@ export default function LogRowV2({ log, onClick, selected, isDark }) {
                 </div>
 
                 {/* Meta row: logger · thread · host · duration */}
-                {(log.logger || log.thread || log.hostName || log.durationMs != null) && (
+                {(log.logger || log.thread || log.hostName || log.durationMs != null || log.deliveryLatencyMs != null) && (
                     <div className={`flex flex-wrap gap-3 mt-1.5 font-mono text-[11px] ${isDark ? "text-slate-600" : "text-slate-400"}`}>
                         {log.logger    && <span>logger: {log.logger}</span>}
                         {log.thread    && <span>thread: {log.thread}</span>}
                         {log.hostName  && <span>host: {log.hostName}</span>}
                         {log.durationMs != null && <span>duration: {log.durationMs}ms</span>}
+                        {log.deliveryLatencyMs != null && <span>ws latency: {log.deliveryLatencyMs}ms</span>}
                     </div>
                 )}
 

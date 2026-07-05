@@ -6,6 +6,11 @@ filebeat.inputs:
   # Đường dẫn file log bên trong container Filebeat (sẽ được map ở file compose)
   paths:
     - /var/log/logs-app/logs-app.log
+    # Giảm thời gian quét file xuống 1 giây (mặc định 10s)
+  scan_frequency: 1s
+  
+  # Nếu file log không có dữ liệu mới, kiểm tra lại sau 1 giây
+  backoff.init: 1s
 
   # Gộp các dòng stacktrace vào đúng 1 log entry (dựa trên dòng bắt đầu bằng timestamp)
   parsers:
@@ -15,6 +20,8 @@ filebeat.inputs:
         pattern: '^[0-9]{4}-[0-9]{2}-[0-9]{2}'
         negate: true
         match: after
+        # tự động gửi log hiện tại đi luôn, không đợi dòng tiếp theo nữa (mặc định 5s)
+        timeout: 1s 
 
 processors:
   # Gắn metadata để Logstash/Elasticsearch dễ phân loại nguồn log
@@ -29,3 +36,5 @@ processors:
 output.logstash:
   # Cùng network khác compose thì gọi bằng container_name
   hosts: ["47.128.219.78:5044"] # Gọi sang container logstash chung mạng mạng docker
+  # BỔ SUNG: Gom log gửi đi sau tối đa 1 giây nếu không đủ số lượng (bulk_max_size)
+  flush.timeout: 1s
