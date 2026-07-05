@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 .alert-rule-detail-scope .text-xs {
-	font-size: 17px;
+	font-size: 14px;
 	line-height: 1.45;
 }
 
 .alert-rule-detail-scope .text-sm {
-	font-size: 19px;
+	font-size: 16px;
 	line-height: 1.45;
 }
 
 .alert-rule-detail-scope .text-base {
-	font-size: 21px;
+	font-size: 18px;
 	line-height: 1.4;
 }
 
 .alert-rule-detail-scope .text-\[10px\] {
-	font-size: 15px;
+	font-size: 12px;
 	line-height: 1.35;
 }
 
 .alert-rule-detail-scope .text-\[11px\] {
-	font-size: 16px;
+	font-size: 13px;
 	line-height: 1.35;
 }
 
 .alert-rule-detail-scope .text-\[12px\] {
-	font-size: 17px;
+	font-size: 14px;
 	line-height: 1.4;
 }
