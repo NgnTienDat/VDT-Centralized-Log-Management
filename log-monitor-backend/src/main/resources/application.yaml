@@ -10,3 +10,7 @@ spring:
 
   elasticsearch:
     uris: ${SPRING_ELASTICSEARCH_URIS:http://localhost:9200}
+
+logging:
+  level:
+    root: OFF
