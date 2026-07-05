@@ -82,6 +82,9 @@ export function useLogStream(liveMode, isFetching) {
                         const sentTimestamp = rawLog.sentTimestamp || rawLog.eventTimestamp || null;
                         const deliveryLatencyMs = sentTimestamp ? Math.max(0, Date.now() - new Date(sentTimestamp).getTime()) : null;
 
+                        console.log("Received STOMP message:", rawLog);
+                        console.log(`Sent Timestamp: ${sentTimestamp}, Received Timestamp: ${receivedTimestamp}, Delivery Latency: ${deliveryLatencyMs}ms`);
+
                         // 3. Client-Side Fallback Matching (Hybrid Filtering)
                         const envMatch = !environment || rawLog.environment?.toUpperCase() === environment.toUpperCase();
                         const levelMatch = !logLevel || rawLog.logLevel?.toUpperCase() === logLevel.toUpperCase();
