@@ -36,7 +36,7 @@ export default function LogTable({
             </div> */}
 
             {/* Column headers V1 */}
-            <div 
+            <div
                 className={`grid gap-x-3 px-3.5 py-2 border-b border-l-[3px] border-l-transparent ${headerClass}`}
                 style={{ gridTemplateColumns: "148px 62px 88px 140px 1fr" }}
             >
@@ -79,11 +79,10 @@ export default function LogTable({
                                 ) : (
                                     <button
                                         onClick={fetchNextPage}
-                                        className={`px-5 py-2 text-[10px] tracking-widest font-bold rounded-lg border transition-all duration-200 cursor-pointer font-mono ${
-                                            isDark
+                                        className={`px-5 py-2 text-[10px] tracking-widest font-bold rounded-lg border transition-all duration-200 cursor-pointer font-mono ${isDark
                                                 ? "bg-sky-500/10 border-sky-500/30 text-sky-400 hover:bg-sky-500/20 hover:border-sky-500/40"
                                                 : "bg-sky-50 border-sky-200 text-sky-600 hover:bg-sky-100 hover:border-sky-300"
-                                        }`}
+                                            }`}
                                     >
                                         LOAD MORE
                                     </button>

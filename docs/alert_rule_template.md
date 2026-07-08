@@ -504,3 +504,5 @@ curl -X POST http://localhost:8080/api/v1/alerts/rules \
 3. **Thêm Rule 2 (Error By Service)** — cụ thể hoá service nào lỗi
 4. **Thêm Rule 7 (Log Silence)** — phát hiện service chết
 5. **Các rule còn lại** — bổ sung dần khi hệ thống ổn định
+
+

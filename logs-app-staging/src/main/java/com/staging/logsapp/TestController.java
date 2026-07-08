@@ -63,7 +63,7 @@ public class TestController {
 
     @GetMapping("/error")
     public ResponseEntity<String> getLogError() {
-        log.error("Payment processing failed for order #12345: insufficient funds", new RuntimeException("Payment gateway timeout"));
+        log.error("Payment processing failed for order #12345: insufficient funds", new NullPointerException("Payment gateway timeout"));
         return ResponseEntity.ok("ERROR log generated");
     }
 

@@ -2,6 +2,7 @@ package com.vdt.log_monitor.alert;
 
 import com.vdt.log_monitor.alert.dto.UpdateRuleRequest;
 import com.vdt.log_monitor.alert.enums.AlertState;
+import com.vdt.log_monitor.alert.model.PipelineStep;
 import com.vdt.log_monitor.alert.model.RuleConfig;
 import com.vdt.log_monitor.alert.scheduler.AlertSchedulerManager;
 import com.vdt.log_monitor.common.exception.AppException;
@@ -30,11 +31,21 @@ public class AlertRuleService {
     }
 
     public RuleConfig createRule(RuleConfig ruleConfig) {
+
+        List<PipelineStep> steps = ruleConfig.getPipelineSteps();
+
+        if (steps == null
+                || steps.isEmpty()
+                || !"FETCH_ES_DATA".equals(steps.get(0).getType())) {
+            throw new AppException(ErrorCode.ALERT_RULE_INVALID_FIRST_STEP);
+        }
+
         ruleConfig.setRuleId(UidGenerator.generateUid());
 
         if (ruleConfig.getIsActive() == null) {
             ruleConfig.setIsActive(true);
         }
+
         ruleConfig.setLastRunTime(0L);
         ruleConfig.setAlertState(AlertState.OK);
         ruleConfig.setLastNotifiedTime(0L);
@@ -88,5 +99,15 @@ public class AlertRuleService {
         ruleRepository.deleteById(ruleId);
 
         log.info("Xóa thành công Rule ID: {} khỏi hệ thống.", ruleId);
+    }
+
+    private void validatePipeline(List<PipelineStep> steps) {
+        if (steps == null || steps.isEmpty()) {
+            throw new AppException(ErrorCode.ALERT_RULE_INVALID_PIPELINE);
+        }
+
+        if (!"FETCH_ES_DATA".equals(steps.get(0).getType())) {
+            throw new AppException(ErrorCode.ALERT_RULE_INVALID_FIRST_STEP);
+        }
     }
 }

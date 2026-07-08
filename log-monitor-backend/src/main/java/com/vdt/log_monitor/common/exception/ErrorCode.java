@@ -27,6 +27,8 @@ public enum ErrorCode  {
     WEBHOOK_DELIVERY_FAILED(3002, "Webhook delivery failed", HttpStatus.BAD_GATEWAY),
     NOTIFICATION_SEND_FAILED(3003, "Notification send failed", HttpStatus.SERVICE_UNAVAILABLE),
     ALERT_CONFIGURATION_INVALID(3004, "Alert configuration is invalid", HttpStatus.BAD_REQUEST),
+    ALERT_RULE_INVALID_FIRST_STEP(3005, "The first step of the alert rule must be FETCH_ES_DATA", HttpStatus.BAD_REQUEST),
+    ALERT_RULE_INVALID_PIPELINE(3006, "The alert rule pipeline is invalid", HttpStatus.BAD_REQUEST)
     ;
 
     private final int code;

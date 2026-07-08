@@ -40,16 +40,16 @@ const createFetchStep = (id) => ({
 const createMathStep = (id) => ({ id, type: "MATH", inputs: [], expression: "" });
 const createThresholdStep = (id) => ({ id, type: "EVALUATE_THRESHOLD", inputStepId: "", operator: "GREATER_THAN", value: "" });
 
-export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit }) {
-    // Gọi cả 2 hàm mutate từ hook useAlerts
+export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit, groupByFields = [], isLoadingGroupByFields = false, groupByFieldsError = false }) {
+    // Call both mutate functions from useAlerts hook
     const { createRuleAsync, updateRuleAsync, isCreatingRule, createRuleError } = useAlerts();
 
     const idCounterRef = useRef(1);
 
-    // 2. Khởi tạo State linh hoạt dựa trên việc tạo mới hay chỉnh sửa
+    // Initialize flexible State based on whether creating new or editing existing
     const [name, setName] = useState(ruleToEdit ? ruleToEdit.name : "");
 
-    // Tách intervalMinutes ngược lại thành Value và Unit ban đầu
+    // Split intervalMinutes back into initial Value and Unit
     const [intervalValue, setIntervalValue] = useState(() => {
         if (!ruleToEdit) return 1;
         const mins = ruleToEdit.intervalMinutes;
@@ -60,12 +60,12 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
         return ruleToEdit.intervalMinutes % 60 === 0 && ruleToEdit.intervalMinutes >= 60 ? "hours" : "minutes";
     });
 
-    // Hàm chuyển đổi cấu trúc pipeline từ Backend params thành cấu trúc State UI
+    // Convert pipeline structure from Backend params to UI State structure
     const [steps, setSteps] = useState(() => {
         if (!ruleToEdit || !ruleToEdit.pipelineSteps) {
             return [createFetchStep("A")];
         }
-        // Đồng bộ idCounterRef để nếu thêm Step mới sẽ không trùng lặp ID cũ
+        // Sync idCounterRef so adding a new Step won't duplicate an old ID
         idCounterRef.current = ruleToEdit.pipelineSteps.length;
 
         return ruleToEdit.pipelineSteps.map((s) => {
@@ -162,6 +162,13 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
 
     const fetchStepCount = useMemo(() => steps.filter((s) => s.type === "FETCH_ES_DATA").length, [steps]);
 
+    const groupByOptions = useMemo(() => {
+        if (Array.isArray(groupByFields) && groupByFields.length > 0) {
+            return groupByFields;
+        }
+        return GROUP_BY_OPTIONS;
+    }, [groupByFields]);
+
     // Split steps based on UI block categories
     const querySteps = useMemo(() => steps.filter((s) => s.type === "FETCH_ES_DATA"), [steps]);
     const expressionSteps = useMemo(() => steps.filter((s) => s.type === "MATH" || s.type === "EVALUATE_THRESHOLD"), [steps]);
@@ -171,7 +178,6 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
         if (fetchStepCount === 0) return "At least 1 Query Logs Data block is required.";
         for (const s of steps) {
             if (s.type === "FETCH_ES_DATA") {
-                if (!s.query.trim()) return `Block [${s.id}] requires a Lucene query.`;
                 if (s.metricType !== "COUNT" && !s.metricField.trim()) {
                     return `Block [${s.id}] has metric type "${s.metricType}" selected but requires a Metric Field.`;
                 }
@@ -199,7 +205,7 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
                     id: s.id,
                     type: "FETCH_ES_DATA",
                     params: {
-                        query: s.query,
+                        query: s.query.trim(),
                         lookBackMinutes: Number(s.lookBackMinutes) || 0,
                         groupBy: s.groupBy,
                         metricType: s.metricType,
@@ -241,19 +247,19 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
             const payload = buildPayload();
 
             if (ruleToEdit) {
-                // Chế độ EDIT -> gọi PATCH thông qua updateRuleAsync
+                // EDIT Mode -> call PATCH via updateRuleAsync
                 await updateRuleAsync({
                     ruleId: ruleToEdit.ruleId,
                     data: payload
                 });
                 onCreated?.();
             } else {
-                // Chế độ CREATE -> gọi POST
+                // CREATE Mode -> call POST
                 const saved = await createRuleAsync(payload);
                 onCreated?.(saved);
             }
         } catch (e) {
-            console.error("Lỗi khi xử lý lưu Alert Rule:", e);
+            console.error("Error handling alert rule save:", e);
         }
     }
 
@@ -308,6 +314,9 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
                                 onRemove={() => removeStep(step.id)}
                                 onSetTrigger={() => setTriggerStepId(step.id)}
                                 canRemove={!(step.type === "FETCH_ES_DATA" && fetchStepCount === 1)}
+                                groupByOptions={groupByOptions}
+                                isLoadingGroupByFields={isLoadingGroupByFields}
+                                groupByFieldsError={groupByFieldsError}
                             />
                         );
                     })}
@@ -337,6 +346,9 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
                                         onRemove={() => removeStep(step.id)}
                                         onSetTrigger={() => setTriggerStepId(step.id)}
                                         canRemove={true}
+                                        groupByOptions={groupByOptions}
+                                        isLoadingGroupByFields={isLoadingGroupByFields}
+                                        groupByFieldsError={groupByFieldsError}
                                     />
                                 );
                             })}
@@ -412,7 +424,6 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
             <div className="flex justify-end gap-2 pt-2 border-t border-slate-200 dark:border-white/10">
                 <button type="button" onClick={onClose} className={`text-xs px-4 py-2 rounded-lg font-semibold ${isDark ? "hover:bg-white/10 text-slate-400" : "hover:bg-slate-100 text-slate-655"}`}>Cancel</button>
                 <button type="button" disabled={isCreatingRule} onClick={handleSave} className="text-xs px-4 py-2 rounded-lg bg-violet-600 text-white hover:bg-violet-500 disabled:opacity-50 font-semibold">
-                    {/* {isCreatingRule ? "Saving..." : "Save"} */}
                     {isCreatingRule ? "Saving..." : ruleToEdit ? "Save Changes" : "Save"}
                 </button>
             </div>
@@ -420,7 +431,19 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit })
     );
 }
 
-function PipelineStepBlock({ step, isDark, inputOptions, triggerStepId, onChange, onRemove, onSetTrigger, canRemove }) {
+function PipelineStepBlock({
+    step,
+    isDark,
+    inputOptions,
+    triggerStepId,
+    onChange,
+    onRemove,
+    onSetTrigger,
+    canRemove,
+    groupByOptions = GROUP_BY_OPTIONS,
+    isLoadingGroupByFields = false,
+    groupByFieldsError = false,
+}) {
     const blockCls = isDark ? "bg-white/3 border-white/8" : "bg-slate-50 border-slate-300 shadow-xs";
     const inputCls = isDark
         ? "bg-white/5 border-white/10 text-slate-200 placeholder:text-slate-600 focus:border-violet-500 focus:ring-1 focus:ring-violet-500 focus:outline-none"
@@ -441,7 +464,7 @@ function PipelineStepBlock({ step, isDark, inputOptions, triggerStepId, onChange
                     {canBeTrigger && (
                         <label className={`flex items-center gap-1.5 text-[11px] font-semibold cursor-pointer ${isDark ? "text-slate-300" : "text-slate-700"}`}>
                             <input type="radio" name="triggerStepId" checked={triggerStepId === step.id} onChange={onSetTrigger} className="accent-violet-600" />
-                            🎯 Use as Trigger
+                            Use as Trigger
                         </label>
                     )}
                     {canRemove && (
@@ -453,8 +476,8 @@ function PipelineStepBlock({ step, isDark, inputOptions, triggerStepId, onChange
             {step.type === "FETCH_ES_DATA" && (
                 <>
                     <div>
-                        <label className={labelCls}>Query (Lucene)</label>
-                        <textarea rows={2} className={`w-full rounded-lg border px-3 py-2 text-sm font-mono ${inputCls}`} placeholder="level:ERROR OR level:FATAL" value={step.query} onChange={(e) => onChange({ query: e.target.value })} />
+                        <label className={labelCls}>Query (Lucene, optional)</label>
+                        <textarea rows={2} className={`w-full rounded-lg border px-3 py-2 text-sm font-mono ${inputCls}`} placeholder="Leave empty to match all logs" value={step.query} onChange={(e) => onChange({ query: e.target.value })} />
                     </div>
                     <div className="flex items-end gap-2">
                         <div>
@@ -466,7 +489,9 @@ function PipelineStepBlock({ step, isDark, inputOptions, triggerStepId, onChange
                     <div>
                         <label className={labelCls}>Group By</label>
                         <div className="flex flex-wrap gap-1.5">
-                            {GROUP_BY_OPTIONS.map((field) => {
+                            {isLoadingGroupByFields && <span className={`text-[11px] ${isDark ? "text-slate-500" : "text-slate-400"}`}>Loading fields...</span>}
+                            {groupByFieldsError && <span className="text-[11px] text-rose-500">Cannot load fields.</span>}
+                            {groupByOptions.map((field) => {
                                 const active = step.groupBy.includes(field);
                                 return (
                                     <button key={field} type="button"

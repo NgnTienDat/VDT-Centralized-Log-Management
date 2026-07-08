@@ -9,10 +9,7 @@ import com.vdt.log_monitor.alert.model.TriggerResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -28,70 +25,94 @@ public class EvaluateThresholdExecutor implements ExpressionExecutor {
     public ExpressionResult execute(PipelineStep step, Map<String, ExpressionResult> context) {
         Map<String, Object> params = step.getParams();
         String inputStepId = (String) params.get("input");
-        ThresholdOperator operator = ThresholdOperator.valueOf(((String) params.get("operator")).toUpperCase());
+        ThresholdOperator operator = ThresholdOperator.valueOf(
+                ((String) params.get("operator")).toUpperCase());
         double thresholdValue = Double.parseDouble(params.get("value").toString());
 
         ExpressionResult prevResult = context.get(inputStepId);
-        if (prevResult == null) {
+        if (prevResult == null)
             throw new IllegalArgumentException("Không tìm thấy dữ liệu của step trước: " + inputStepId);
-        }
 
-        Map<String, Double> metricData = new HashMap<>();
+        // ── Normalize dữ liệu đầu vào về Map<groupKey, Double> ──────────────────────
+        Map<String, Double> metricData = new LinkedHashMap<>();
         List<String> groupByFields = new ArrayList<>();
 
-        // Thích ứng động với mọi định dạng cấu trúc số học từ các Executor khác
         Object rawValue = prevResult.getValue();
-        if (rawValue instanceof FetchDataResult) {
-            FetchDataResult fdr = (FetchDataResult) rawValue;
-            if (fdr.getMetrics() != null) {
+        if (rawValue instanceof FetchDataResult fdr) {
+            if (fdr.getMetrics() != null)
                 metricData.putAll(fdr.getMetrics());
-            }
-            if (fdr.getGroupByFields() != null) {
+            if (fdr.getGroupByFields() != null)
                 groupByFields.addAll(fdr.getGroupByFields());
-            }
         } else if (rawValue instanceof Map) {
-            Map<?, ?> rawMap = (Map<?, ?>) rawValue;
-            for (Map.Entry<?, ?> entry : rawMap.entrySet()) {
-                String key = String.valueOf(entry.getKey());
-                Object val = entry.getValue();
-                if (val instanceof Number) {
-                    metricData.put(key, ((Number) val).doubleValue());
-                }
-            } // alloo
+            ((Map<?, ?>) rawValue).forEach((k, v) -> {
+                if (v instanceof Number)
+                    metricData.put(String.valueOf(k), ((Number) v).doubleValue());
+            });
         } else if (rawValue instanceof Number) {
             metricData.put("DEFAULT", ((Number) rawValue).doubleValue());
         } else {
-            throw new IllegalArgumentException("Dữ liệu từ step '" + inputStepId + "' không tương thích để so sánh ngưỡng (Cần FetchDataResult, Map hoặc Number)");
+            throw new IllegalArgumentException(
+                    "Dữ liệu từ step '" + inputStepId + "' không tương thích để so sánh ngưỡng");
         }
 
+        // ── scopeLabel: mô tả phạm vi đánh giá ──────────────────────────────────────
+        // Với EVALUATE_THRESHOLD, không có biểu thức toán học → groupByFields
+        // được kế thừa từ FETCH_ES_DATA phía trước.
+        // "DEFAULT" nghĩa là không groupBy → label = "Toàn hệ thống"
+        String scopeLabel = groupByFields.isEmpty()
+                ? "Toàn hệ thống"
+                : "Theo " + String.join(", ", groupByFields);
+
+        // ── Evaluate từng group
+        // ───────────────────────────────────────────────────────
         boolean isTriggered = false;
         List<String> breachedGroups = new ArrayList<>();
-        Map<String, Double> breachedGroupValues = new HashMap<>();
+        Map<String, Double> breachedGroupValues = new LinkedHashMap<>(); // raw actual value
+        Map<String, Double> computedValues = new LinkedHashMap<>(); // cùng actual value vì không có bước tính trung
+                                                                    // gian
 
         for (Map.Entry<String, Double> entry : metricData.entrySet()) {
+            String groupKey = entry.getKey();
             double actualValue = entry.getValue();
             boolean conditionMet = operator.test(actualValue, thresholdValue);
 
-            if (conditionMet) {
-                isTriggered = true;
-                breachedGroups.add(entry.getKey());
-                breachedGroupValues.put(entry.getKey(), actualValue);
-            }
+            log.info("Kiểm tra ngưỡng [{}][Group: {}]: {} {} {} → {}",
+                    step.getId(), groupKey, actualValue, operator, thresholdValue, conditionMet);
 
-            log.info("Kiểm tra ngưỡng [{}][Group: {}]: thực tế {} {} ngưỡng {} => {}",
-                    step.getId(), entry.getKey(), actualValue, operator, thresholdValue, conditionMet);
+            if (!conditionMet)
+                continue;
+
+            isTriggered = true;
+
+            // Thay "DEFAULT" bằng scopeLabel để frontend không thấy chuỗi kỹ thuật
+            String displayKey = "DEFAULT".equals(groupKey) ? scopeLabel : groupKey;
+            breachedGroups.add(displayKey);
+            breachedGroupValues.put(displayKey, actualValue);
+
+            /*
+             * computedValues với EVALUATE_THRESHOLD:
+             * Không có bước tính toán trung gian (khác MathExecutor).
+             * actualValue chính là giá trị cần so sánh với threshold,
+             * nên computedValues = actualValue.
+             *
+             * Frontend có thể dùng computedValues để render:
+             * "auth-service|dev: 18 log ERROR (ngưỡng: 5)"
+             */
+            computedValues.put(displayKey, actualValue);
         }
 
-        Map<String, Object> metadata = new HashMap<>();
+        Map<String, Object> metadata = new LinkedHashMap<>();
         metadata.put("thresholdValue", thresholdValue);
         metadata.put("operator", operator.name());
-        metadata.put("actualValues", metricData);
+        metadata.put("actualValues", new LinkedHashMap<>(metricData)); // toàn bộ, không chỉ breached
 
         TriggerResult triggerResult = TriggerResult.builder()
                 .triggered(isTriggered)
                 .breachedGroups(breachedGroups)
-                .groupByFields(groupByFields)
                 .breachedGroupValues(breachedGroupValues)
+                .computedValues(computedValues)
+                .groupByFields(groupByFields)
+                .scopeLabel(scopeLabel)
                 .metadata(metadata)
                 .build();
 

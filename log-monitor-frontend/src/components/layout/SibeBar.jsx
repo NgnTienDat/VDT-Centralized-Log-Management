@@ -2,7 +2,8 @@ import { useState } from "react";
 
 export default function SideBar({ activeTab, setActiveTab, isDark }) {
     const sidebarBg = isDark ? "bg-[#0a0f1a] border-white/5" : "bg-white border-slate-200 shadow-xs";
-    const textTitle = isDark ? "text-slate-400" : "text-slate-500";
+    const textSection = isDark ? "text-slate-500" : "text-slate-400";
+    const textBrand = isDark ? "text-slate-200" : "text-slate-900";
 
     const menuItems = [
         { id: "logs", label: "Logs Explorer" },
@@ -17,16 +18,16 @@ export default function SideBar({ activeTab, setActiveTab, isDark }) {
                     🛰️
                 </div>
                 <div>
-                    <h1 className="text-sm font-bold tracking-tight text-slate-800 dark:text-slate-200">
+                    <h1 className={`text-sm font-bold tracking-tight ${textBrand}`}>
                         Log<span className="text-indigo-500">Radar</span>
                     </h1>
-                    <p className={`text-[10px] font-mono ${textTitle}`}>v1.0.0</p>
+                    <p className={`text-[10px] font-mono ${textSection}`}>v1.0.0</p>
                 </div>
             </div>
 
             {/* Navigation Tabs */}
             <nav className="flex-1 p-4 flex flex-col gap-1.5">
-                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 mb-2 block ${textTitle}`}>
+                <span className={`text-[10px] uppercase font-bold tracking-wider px-2 mb-2 block ${textSection}`}>
                     Main Modules
                 </span>
                 {menuItems.map((item) => {
@@ -50,7 +51,7 @@ export default function SideBar({ activeTab, setActiveTab, isDark }) {
             </nav>
 
             {/* System Info Footer */}
-            <div className="p-4 border-t border-inherit text-[10px] font-mono text-center text-slate-500">
+            <div className={`p-4 border-t border-inherit text-[10px] font-mono text-center ${textSection}`}>
                 VDT Centralized Log
             </div>
         </aside>

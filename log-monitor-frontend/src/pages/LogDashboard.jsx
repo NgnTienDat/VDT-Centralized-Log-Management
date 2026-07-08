@@ -58,31 +58,28 @@ export default function LogDashboard({ isDark }) {
     return (
         <div className="flex flex-col gap-1">
             <div className="flex items-center justify-between border-b pb-1 border-slate-200 dark:border-white/5">
-                <div>
-                    <h2 className="text-base font-bold tracking-tight text-slate-500 dark:text-slate-400">
-                        Logs Stream Explorer
-                    </h2>
-                    <p className="text-xs text-slate-400 mt-0.5">
-                        Truy vết dữ liệu log tập trung hệ thống theo thời gian thực
-                    </p>
-                </div>
+                <div className="flex items-center gap-3">
+                    <span className="text-sm font-semibold text-slate-800 dark:text-slate-500">
+                        Realtime Logs
+                    </span>
 
-                <button
-                    onClick={() => setLiveMode((p) => !p)}
-                    className={`flex items-center gap-2 border rounded-lg px-3.5 py-1.5 cursor-pointer font-mono text-[11px] font-bold tracking-wider transition-all duration-150 ${liveButtonClass}`}
-                >
-                    {liveMode ? (
-                        <>
-                            <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                            <span>⏸ PAUSE STREAM</span>
-                        </>
-                    ) : (
-                        <>
-                            <span className={`w-2 h-2 rounded-full inline-block ${isDark ? "bg-slate-600" : "bg-slate-400"}`} />
-                            <span>▶ GO LIVE</span>
-                        </>
-                    )}
-                </button>
+                    <button
+                        onClick={() => setLiveMode((p) => !p)}
+                        className={`flex items-center gap-2 border rounded-xl px-4 py-2 cursor-pointer font-mono text-xs font-bold tracking-wider transition-all duration-150 ${liveButtonClass}`}
+                    >
+                        {liveMode ? (
+                            <>
+                                <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
+                                <span>OFF</span>
+                            </>
+                        ) : (
+                            <>
+                                <span className={`w-2 h-2 rounded-full inline-block ${isDark ? "bg-slate-600" : "bg-slate-500"}`} />
+                                <span>ON</span>
+                            </>
+                        )}
+                    </button>
+                </div>
             </div>
 
             <StatsRow stats={statsMetrics} errorHistory={errorHistory} isDark={isDark} />

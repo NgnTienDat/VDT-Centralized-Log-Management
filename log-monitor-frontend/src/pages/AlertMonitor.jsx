@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAlerts } from "../hooks/useAlerts";
+import { useEsIndexFilelds } from "../hooks/useEsIndexFilelds";
 import NewAlertRule from "../components/alert/NewAlertRule";
 import AlertRuleDetail from "../components/alert/AlertRuleDetail"; // Import component mới tạo
 
@@ -11,6 +12,7 @@ const STATE_BADGE = {
 export default function AlertMonitor({ isDark }) {
     const [showNewRule, setShowNewRule] = useState(false);
     const [selectedRuleId, setSelectedRuleId] = useState(null); // Quản lý ID rule đang chọn xem chi tiết
+    const { fields: esIndexFields, isLoadingFields, isFieldsError } = useEsIndexFilelds();
 
     const {
         rules,
@@ -52,20 +54,20 @@ export default function AlertMonitor({ isDark }) {
         <section className={`mt-6 rounded-2xl border overflow-hidden ${isDark ? "bg-[#0a0f1a] border-white/6" : "bg-white border-slate-200 shadow-sm"}`}>
             <div className={`flex items-center justify-between px-5 py-3 border-b ${isDark ? "border-white/6" : "border-slate-200"}`}>
                 <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-linear-to-br from-violet-600 to-indigo-500 flex items-center justify-center text-base">🔔</div>
+                    {/* <div className="w-8 h-8 rounded-lg bg-linear-to-br from-violet-600 to-indigo-500 flex items-center justify-center text-base">🔔</div> */}
                     <div>
                         <h2 className={`text-sm font-semibold tracking-tight ${isDark ? "text-slate-200" : "text-slate-800"}`}>
                             Alert <span className="text-violet-400">Rules</span>
                         </h2>
                         <p className={`text-[10px] ${isDark ? "text-slate-500" : "text-slate-400"}`}>
-                            {rules.length} rule{rules.length !== 1 ? "s" : ""}     
+                            {rules.length} rule{rules.length !== 1 ? "s" : ""}
                         </p>
                     </div>
                 </div>
-{/* tesst */}
+                {/* tesst */}
                 {!selectedRuleId && (
                     <button onClick={() => setShowNewRule((p) => !p)} className="text-xs px-3 py-1.5 rounded-lg bg-violet-600 text-white hover:bg-violet-500 transition-colors">
-                        {showNewRule ? "Đóng" : "+ New alert rule"}
+                        {showNewRule ? "Close" : "+ New alert rule"}
                     </button>
                 )}
             </div>
@@ -86,7 +88,14 @@ export default function AlertMonitor({ isDark }) {
                 <>
                     {showNewRule && (
                         <div className="p-5 border-b border-white/6">
-                            <NewAlertRule isDark={isDark} onClose={() => setShowNewRule(false)} onCreated={handleCreated} />
+                            <NewAlertRule
+                                isDark={isDark}
+                                onClose={() => setShowNewRule(false)}
+                                onCreated={handleCreated}
+                                groupByFields={esIndexFields}
+                                isLoadingGroupByFields={isLoadingFields}
+                                groupByFieldsError={isFieldsError}
+                            />
                         </div>
                     )}
 
@@ -134,7 +143,7 @@ export default function AlertMonitor({ isDark }) {
                                         onClick={(e) => handleDelete(e, rule)}
                                         className="text-[11px] px-2.5 py-1 rounded-lg text-rose-400 hover:bg-rose-500/10 font-semibold"
                                     >
-                                        Xoá
+                                        Delete
                                     </button>
                                 </div>
                             </div>
