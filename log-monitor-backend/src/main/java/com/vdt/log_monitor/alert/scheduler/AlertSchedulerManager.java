@@ -118,9 +118,6 @@ public class AlertSchedulerManager {
                             // printTriggerResultAndNotification(rule, pipelineResult);
                             publishAlertNotification(rule, triggerResult, now);
 
-                            
-
-
                         }
                     } else {
                         log.info(
@@ -163,63 +160,6 @@ public class AlertSchedulerManager {
     }
 
     /**
-     * In ra console kết quả thô của step Trigger (TriggerResult) và bản thông báo
-     * đã render
-     * từ RuleConfig.notificationTemplate.
-     *
-     * Placeholder hỗ trợ: {ruleName}, {breachedGroups}, {groupByFields}, và BẤT KỲ
-     * key nào
-     * có trong TriggerResult.metadata (vd {thresholdValue}, {operator},
-     * {actualValues},
-     * {expression}...). Vì lấy trực tiếp từ metadata, executor mới thêm key
-     * metadata mới
-     * thì template tự nhận, không cần sửa hàm này -> giữ đúng tinh thần OCP.
-     */
-    private void printTriggerResultAndNotification(RuleConfig rule, PipelineResult pipelineResult) {
-        ExpressionResult triggerStepResult = pipelineResult.getContext().get(rule.getTriggerStepId());
-        Object rawValue = triggerStepResult != null ? triggerStepResult.getValue() : null;
-
-        // log.info("--- [KẾT QUẢ THÔ TỪ TRIGGER STEP: {}] ---",
-        // rule.getTriggerStepId());
-        // log.info("Dữ liệu thô (TriggerResult): {}", rawValue);
-        // log.info("---------------------------------------------------------------------");
-
-        System.out.println("--- [KẾT QUẢ THÔ TỪ TRIGGER STEP: " + rule.getTriggerStepId() + "] ---");
-        System.out.println("Dữ liệu thô (TriggerResult): " + rawValue);
-        System.out.println("---------------------------------------------------------------------");
-
-        if (!(rawValue instanceof TriggerResult triggerResult)) {
-            // Không nên xảy ra vì ExpressionEngine đã validate, nhưng phòng hờ để tránh
-            // NPE/ClassCastException
-            log.error("Trigger step '{}' không trả về TriggerResult hợp lệ, bỏ qua việc render thông báo.",
-                    rule.getTriggerStepId());
-            return;
-        }
-
-        RuleConfig.NotificationTemplate template = rule.getNotificationTemplate();
-        String title = template != null ? renderTemplate(template.getTitle(), rule, triggerResult) : null;
-        String message = template != null ? renderTemplate(template.getMessage(), rule, triggerResult) : null;
-
-        if (title == null && message == null) {
-            // Rule chưa cấu hình notificationTemplate -> vẫn in thông báo mặc định để
-            // dev/tester nhìn thấy gì đó
-            // log.warn("📢 [THÔNG BÁO] Rule [{}] đã breach các group: {}", rule.getName(),
-            // triggerResult.getBreachedGroups());
-            System.out.println("📢 WARN [THÔNG BÁO] Rule [" + rule.getName() + "] đã breach các group: "
-                    + triggerResult.getBreachedGroups());
-            System.out.println("---------------------------------------------------------------------");
-
-        } else {
-            // log.warn("📢 [THÔNG BÁO] {}", title);
-            // log.warn(" {}", message);
-            System.out.println("📢 WARN [THÔNG BÁO] " + title);
-            System.out.println("    " + message);
-            System.out.println("---------------------------------------------------------------------");
-
-        }
-    }
-
-    /**
      * Lấy TriggerResult từ context của step được gán làm Trigger.
      * Trả về null + log lỗi nếu dữ liệu không hợp lệ (không nên xảy ra vì
      * ExpressionEngine đã validate, đây là lớp phòng hờ).
@@ -235,31 +175,24 @@ public class AlertSchedulerManager {
         return null;
     }
 
-    /**
-     * Đóng gói TriggerResult + title/message đã render từ
-     * RuleConfig.notificationTemplate
-     * vào AlertNotificationPayload, rồi gửi qua AlertPublisher (topic
-     * /topic/alerts).
-     * <p>
-     * Placeholder hỗ trợ trong template: {ruleName}, {breachedGroups},
-     * {groupByFields},
-     * và BẤT KỲ key nào có trong TriggerResult.metadata (vd {thresholdValue},
-     * {operator},
-     * {actualValues}, {expression}...).
-     */
     private void publishAlertNotification(RuleConfig rule, TriggerResult triggerResult, long timestamp) {
         RuleConfig.NotificationTemplate template = rule.getNotificationTemplate();
         String title = template != null ? renderTemplate(template.getTitle(), rule, triggerResult) : null;
         String message = template != null ? renderTemplate(template.getMessage(), rule, triggerResult) : null;
 
-        // Rule chưa cấu hình notificationTemplate -> vẫn có nội dung mặc định để
-        // frontend hiển thị được
         if (title == null) {
             title = "🚨 [ALERT] " + rule.getName();
         }
         if (message == null) {
+            // Dùng computedValues nếu có (% hoặc giá trị đã tính), fallback về
+            // breachedGroupValues
+            Map<String, Double> displayValues = (triggerResult.getComputedValues() != null
+                    && !triggerResult.getComputedValues().isEmpty())
+                            ? triggerResult.getComputedValues()
+                            : triggerResult.getBreachedGroupValues();
+
             message = "Rule [" + rule.getName() + "] đã breach: "
-                    + formatBreachedGroupValues(triggerResult.getBreachedGroupValues());
+                    + formatBreachedGroupValues(displayValues);
         }
 
         AlertNotificationPayload payload = AlertNotificationPayload.builder()
@@ -270,8 +203,9 @@ public class AlertSchedulerManager {
                 .triggered(triggerResult.isTriggered())
                 .breachedGroups(triggerResult.getBreachedGroups())
                 .breachedGroupValues(triggerResult.getBreachedGroupValues())
+                .computedValues(triggerResult.getComputedValues())
                 .groupByFields(triggerResult.getGroupByFields())
-                // .metadata(triggerResult.getMetadata())
+                .scopeLabel(triggerResult.getScopeLabel())
                 .title(title)
                 .message(message)
                 .timestamp(timestamp)
@@ -293,7 +227,7 @@ public class AlertSchedulerManager {
                     .message(payload.getMessage())
                     .timestamp(payload.getTimestamp())
                     .build();
-            
+
             notificationRepository.save(doc);
             log.debug("💾 Đã lưu log alert notification đầy đủ vào ES cho ruleId: {}", rule.getRuleId());
 

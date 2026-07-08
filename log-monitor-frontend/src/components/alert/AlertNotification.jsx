@@ -1,6 +1,6 @@
-function formatVnTime(ts) {
+function formatTime(ts) {
     if (!ts) return "—";
-    return new Date(ts).toLocaleString("vi-VN", {
+    return new Date(ts).toLocaleString("en-US", {
         timeZone: "Asia/Ho_Chi_Minh",
         year: "numeric",
         month: "2-digit",
@@ -12,8 +12,8 @@ function formatVnTime(ts) {
 }
 
 /**
- * Thuần presentational — không biết WebSocket, không tự fetch.
- * Nhận notifications[] từ AlertRuleDetail (đã lọc theo ruleId).
+ * Pure presentational component — no WebSocket knowledge, no self-fetching.
+ * Receives notifications[] from AlertRuleDetail (already filtered by ruleId).
  */
 export default function AlertNotification({ notifications = [], isDark }) {
     const textMuted = isDark ? "text-slate-400" : "text-slate-500";
@@ -29,9 +29,9 @@ export default function AlertNotification({ notifications = [], isDark }) {
         return (
             <div className="flex flex-col items-center justify-center py-16 gap-2">
                 <span className="text-4xl opacity-20">🔔</span>
-                <p className={`text-xs font-medium ${textMuted}`}>Chưa có thông báo trong phiên này</p>
+                <p className={`text-xs font-medium ${textMuted}`}>No alerts in this session</p>
                 <p className={`text-[10px] ${textMuted}`}>
-                    Thông báo sẽ xuất hiện ở đây khi rule chuyển sang trạng thái FIRING
+                    Alerts will appear here when the rule enters FIRING state
                 </p>
             </div>
         );
@@ -40,7 +40,7 @@ export default function AlertNotification({ notifications = [], isDark }) {
     return (
         <div className="alert-rule-detail-scope flex flex-col gap-3">
             <p className={`text-[11px] ${textMuted}`}>
-                {notifications.length} thông báo · mới nhất ở trên cùng
+                {notifications.length} alert{notifications.length !== 1 ? "s" : ""} · newest on top
             </p>
 
             {notifications.map((notif, idx) => {
@@ -66,11 +66,8 @@ export default function AlertNotification({ notifications = [], isDark }) {
                     <div key={idx} className={`rounded-lg border p-3.5 flex flex-col gap-2.5 ${bgCard}`}>
                         {/* Row 1: alertState badge + timestamp */}
                         <div className="flex items-center justify-between gap-2 flex-wrap">
-                            {/* <span className={`text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded border ${stateBadgeCls}`}>
-                                {notif.alertState}
-                            </span> */}
                             <span className={`text-[10px] font-mono ${textMuted}`}>
-                                🕐 {formatVnTime(notif.timestamp)}
+                                🕐 {formatTime(notif.timestamp)}
                             </span>
                         </div>
 
@@ -86,7 +83,7 @@ export default function AlertNotification({ notifications = [], isDark }) {
                         {breachedEntries.length > 0 && (
                             <div className={`rounded border overflow-hidden ${borderSubtle}`}>
                                 <div className={`px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider border-b ${tableHeaderCls}`}>
-                                    Giá trị vi phạm theo nhóm
+                                    Breached values by group
                                 </div>
                                 {breachedEntries.map(([group, value]) => (
                                     <div

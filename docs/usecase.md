@@ -1,4 +1,3 @@
-Dưới đây là nội dung đã được chuẩn hóa và cấu trúc lại dưới dạng Markdown, tối ưu hóa cho tài liệu kỹ thuật hoặc báo cáo dự án để bạn dễ dàng theo dõi và bổ sung.
 ------------------------------
 ## Đề bài dự án: Hệ thống Giám sát dữ liệu Log và Cảnh báo (Log Monitor & Alert System)
 Chương trình: Viettel Digital Talent 2026 — STT: 30

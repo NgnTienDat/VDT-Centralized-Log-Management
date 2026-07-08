@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useAlerts, useAlertRule } from "../../hooks/useAlerts";
 import { useAlertNotifications, usePrependNotification } from "../../hooks/useAlertNotifications";
 import NewAlertRule from "./NewAlertRule";
@@ -8,9 +8,9 @@ import AlertNotification from "./AlertNotification";
 // Thêm tab mới: push vào đây + thêm 1 dòng render ở TAB CONTENT bên dưới.
 // Không cần sửa bất kỳ logic nào khác.
 const TABS = [
-    { id: "overview", label: "Tổng quan" },
-    { id: "notifications", label: "Cảnh báo" },
-    // { id: "history", label: "Lịch sử" }, // import AlertHistory rồi uncomment
+    { id: "overview", label: "Overview" },
+    { id: "notifications", label: "Alerts" },
+    // { id: "history", label: "History" }, // import AlertHistory then uncomment
 ];
 
 const OPERATOR_LABELS = {
@@ -23,8 +23,8 @@ const OPERATOR_LABELS = {
 };
 
 function formatTimestamp(ts) {
-    if (!ts || ts === 0) return "Chưa từng chạy";
-    return new Date(ts).toLocaleString("vi-VN", {
+    if (!ts || ts === 0) return "Never run";
+    return new Date(ts).toLocaleString("en-US", {
         timeZone: "Asia/Ho_Chi_Minh",
         year: "numeric",
         month: "2-digit",
@@ -42,6 +42,18 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
 
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState("overview");
+    const [unreadNotifCount, setUnreadNotifCount] = useState(0);
+    const prevNotifLengthRef = useRef(notifications.length);
+
+    // Theo dõi số lượng thông báo mới đến khi user không đang xem tab Cảnh báo
+    useEffect(() => {
+        const prev = prevNotifLengthRef.current;
+        const curr = notifications.length;
+        if (curr > prev && activeTab !== "notifications") {
+            setUnreadNotifCount((c) => c + (curr - prev));
+        }
+        prevNotifLengthRef.current = curr;
+    }, [notifications.length, activeTab]);
 
     // onAlert: lọc theo ruleId và prepend vào cache để UI realtime mà không dùng state cục bộ.
     const onAlert = useCallback(
@@ -61,7 +73,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
     if (isLoading) {
         return (
             <div className="p-6 text-xs text-slate-400 animate-pulse">
-                Đang tải thông tin chi tiết alert rule...
+                Loading alert rule details...
             </div>
         );
     }
@@ -69,7 +81,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
     if (isError || !rule) {
         return (
             <div className={`p-4 text-xs font-medium rounded-lg border ${isDark ? "bg-rose-950/20 border-rose-900/50 text-rose-400" : "bg-rose-50 border-rose-200 text-rose-600"}`}>
-                ⚠️ Không thể tải thông tin chi tiết cấu hình Rule này hoặc Rule không tồn tại.
+                ⚠️ Cannot load configuration details for this Rule or it does not exist.
             </div>
         );
     }
@@ -123,8 +135,8 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                 ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                 : "bg-emerald-50 text-emerald-700 border-emerald-200";
 
-    // Badge số thông báo chưa đọc trên tab "Thông báo"
-    const notifBadge = notifications.length;
+    // Badge số thông báo chưa đọc trên tab "Thông báo" — chỉ đếm thông báo mới kể từ lần xem cuối
+    const notifBadge = unreadNotifCount;
 
     return (
         <div className={`alert-rule-detail-scope rounded-xl p-5 flex flex-col gap-5 transition-all ${bgContainer}`}>
@@ -135,12 +147,12 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                         onClick={onClose}
                         className={`text-xs w-fit font-medium hover:underline flex items-center gap-1 whitespace-nowrap ${textMuted}`}
                     >
-                        ← Danh sách rule
+                        ← Rules list
                     </button>
                     <div className="flex items-center gap-2 mt-1 flex-wrap">
                         <h3 className="text-base font-bold tracking-tight">{rule.name}</h3>
                         <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border ${activeBadgeCls}`}>
-                            {rule.isActive ? "Đang chạy" : "Tạm dừng"}
+                            {rule.isActive ? "Active" : "Paused"}
                         </span>
                         <span className={`text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded border ${stateBadgeCls}`}>
                             {rule.alertState || "OK"}
@@ -155,7 +167,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                     onClick={() => setIsEditing(true)}
                     className="text-xs px-3.5 py-1.5 rounded-md bg-indigo-600 text-white font-medium hover:bg-indigo-500 shadow-sm transition-colors whitespace-nowrap"
                 >
-                    Chỉnh sửa (Edit)
+                    Edit
                 </button>
             </div>
 
@@ -168,7 +180,10 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                     return (
                         <button
                             key={tab.id}
-                            onClick={() => setActiveTab(tab.id)}
+                            onClick={() => {
+                                setActiveTab(tab.id);
+                                if (tab.id === "notifications") setUnreadNotifCount(0);
+                            }}
                             className={[
                                 "flex items-center gap-1.5 text-xs px-4 py-2.5 font-medium whitespace-nowrap",
                                 "border-b-2 -mb-px transition-colors",
@@ -196,29 +211,29 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                     {/* 2. OVERVIEW METRICS GRID */}
                     <div className={`grid grid-cols-2 md:grid-cols-3 gap-y-4 gap-x-6 p-4 rounded-lg border ${bgSection}`}>
                         <div>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Tần suất quét (Interval)</span>
-                            <span className={`text-xs font-semibold ${idAccent}`}>{rule.intervalMinutes} phút / lần</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Scan Interval</span>
+                            <span className={`text-xs font-semibold ${idAccent}`}>{rule.intervalMinutes} mins / run</span>
                         </div>
                         <div>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Cooldown thông báo</span>
-                            <span className="text-xs font-medium">{rule.repeatIntervalMinutes} phút</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Notification Cooldown</span>
+                            <span className="text-xs font-medium">{rule.repeatIntervalMinutes} mins</span>
                         </div>
                         <div>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Khối kích hoạt chính</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Main Trigger Step</span>
                             <span className={`text-xs font-mono font-bold ${isDark ? "text-amber-400" : "text-amber-600"}`}>
                                 Step [{rule.triggerStepId}]
                             </span>
                         </div>
                         <div className={`col-span-2 md:col-span-1 border-t pt-2 md:border-t-0 md:pt-0 ${borderSubtle}`}>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Lần kiểm tra cuối cùng</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Last Run Time</span>
                             <span className={`text-xs font-medium ${valueMuted}`}>{formatTimestamp(rule.lastRunTime)}</span>
                         </div>
                         <div className={`border-t pt-2 md:border-t-0 md:pt-0 ${borderSubtle}`}>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Lần bắn thông báo cuối</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Last Notification Time</span>
                             <span className={`text-xs font-medium ${valueMuted}`}>{formatTimestamp(rule.lastNotifiedTime)}</span>
                         </div>
                         <div className={`border-t pt-2 md:border-t-0 md:pt-0 ${borderSubtle}`}>
-                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Nhóm vi phạm gần nhất</span>
+                            <span className={`text-[10px] uppercase tracking-wider block mb-0.5 ${textLabel}`}>Last Breached Groups</span>
                             <div className="mt-0.5">
                                 {rule.lastNotifiedBreachedGroups?.length > 0 ? (
                                     rule.lastNotifiedBreachedGroups.map((g) => (
@@ -227,7 +242,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                                         </span>
                                     ))
                                 ) : (
-                                    <span className={`italic text-[11px] ${textMuted}`}>Không có</span>
+                                    <span className={`italic text-[11px] ${textMuted}`}>None</span>
                                 )}
                             </div>
                         </div>
@@ -236,7 +251,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                     {/* 3. PIPELINE */}
                     <div className="flex flex-col gap-3">
                         <h4 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>
-                            Luồng xử lý dữ liệu (Pipeline)
+                            Data Processing Pipeline
                         </h4>
                         <div className="flex flex-col gap-2">
                             {rule.pipelineSteps?.map((step) => {
@@ -252,9 +267,9 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                                                     [{step.id}]
                                                 </span>
                                                 <span className="text-xs font-semibold">
-                                                    {step.type === "FETCH_ES_DATA" && "Truy vấn Elasticsearch Data"}
-                                                    {step.type === "MATH" && "Biểu thức Toán học"}
-                                                    {step.type === "EVALUATE_THRESHOLD" && "Đánh giá Điều kiện Ngưỡng"}
+                                                    {step.type === "FETCH_ES_DATA" && "Query Elasticsearch Data"}
+                                                    {step.type === "MATH" && "Math Expression"}
+                                                    {step.type === "EVALUATE_THRESHOLD" && "Evaluate Threshold Condition"}
                                                 </span>
                                             </div>
                                             {isTrigger && (
@@ -267,10 +282,10 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                                         {step.type === "FETCH_ES_DATA" && (
                                             <div className={`text-xs pl-2 border-l-2 flex flex-col gap-2 ${isDark ? "border-indigo-500/50" : "border-indigo-300"}`}>
                                                 <div className={`font-mono p-2 rounded text-[11px] overflow-x-auto border whitespace-pre-wrap ${codeCls}`}>
-                                                    {step.params?.query || "(Không có query)"}
+                                                    {step.params?.query || "(No query)"}
                                                 </div>
                                                 <div className={`grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-[11px] ${textMuted}`}>
-                                                    <p>• Lookback: <span className={`font-medium ${valueMuted}`}>{step.params?.lookBackMinutes} phút trước</span></p>
+                                                    <p>• Lookback: <span className={`font-medium ${valueMuted}`}>{step.params?.lookBackMinutes} mins ago</span></p>
                                                     <p>• Group By: <span className={`font-mono font-medium ${valueMuted}`}>{step.params?.groupBy?.length > 0 ? step.params.groupBy.join(", ") : "None"}</span></p>
                                                     <p>• Metric: <span className={`font-medium ${valueMuted}`}>{step.params?.metricType}{step.params?.metricField ? ` (${step.params.metricField})` : ""}</span></p>
                                                     <p>• Index: <span className={`font-mono ${textMuted}`}>{step.params?.index}</span></p>
@@ -281,7 +296,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                                         {step.type === "MATH" && (
                                             <div className={`text-xs pl-2 border-l-2 flex flex-col gap-1.5 ${isDark ? "border-sky-500/50" : "border-sky-300"}`}>
                                                 <p className={`text-[11px] ${textMuted}`}>
-                                                    Nguồn đầu vào:{" "}
+                                                    Input source:{" "}
                                                     {(Array.isArray(step.params?.input) ? step.params.input : [step.params?.input])
                                                         .filter(Boolean)
                                                         .map((i) => (
@@ -296,7 +311,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
 
                                         {step.type === "EVALUATE_THRESHOLD" && (
                                             <div className={`text-xs pl-2 border-l-2 py-1 flex items-center flex-wrap gap-1.5 font-medium ${isDark ? "border-rose-500/50" : "border-rose-300"}`}>
-                                                <span className={textMuted}>Kiểm tra kết quả của</span>
+                                                <span className={textMuted}>Evaluate result of</span>
                                                 <span className={`font-mono font-bold ${idAccent}`}>[{step.params?.input}]</span>
                                                 <span className={`font-bold px-1 ${isDark ? "text-rose-400" : "text-rose-600"}`}>
                                                     {OPERATOR_LABELS[step.params?.operator] ?? step.params?.operator}
@@ -315,19 +330,19 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
                     {/* 4. NOTIFICATION TEMPLATE */}
                     <div className={`border-t pt-4 flex flex-col gap-2.5 ${borderSubtle}`}>
                         <h4 className={`text-xs font-bold uppercase tracking-wider ${textMuted}`}>
-                            Mẫu thông báo khi kích hoạt (Notification Template)
+                            Notification Template
                         </h4>
                         <div className="flex flex-col gap-2 text-xs">
                             <div>
-                                <span className={`text-[10px] block mb-1 ${textLabel}`}>Tiêu đề Alert</span>
+                                <span className={`text-[10px] block mb-1 ${textLabel}`}>Alert Title</span>
                                 <div className={`p-2 rounded font-medium border ${bgSection}`}>
                                     {rule.notificationTemplate?.title}
                                 </div>
                             </div>
                             <div>
-                                <span className={`text-[10px] block mb-1 ${textLabel}`}>Nội dung tin nhắn</span>
+                                <span className={`text-[10px] block mb-1 ${textLabel}`}>Message Content</span>
                                 <div className={`p-2 rounded font-mono whitespace-pre-wrap border text-[11px] ${bgSection} ${textMuted}`}>
-                                    {rule.notificationTemplate?.message || "(Trống)"}
+                                    {rule.notificationTemplate?.message || "(Empty)"}
                                 </div>
                             </div>
                         </div>
@@ -339,7 +354,7 @@ export default function AlertRuleDetail({ ruleId, isDark, onClose }) {
             {activeTab === "notifications" && (
                 isLoadingNotifications ? (
                     <div className="p-4 text-xs text-slate-400 animate-pulse">
-                        Đang tải lịch sử thông báo...
+                        Loading notification history...
                     </div>
                 ) : (
                     <AlertNotification notifications={notifications} isDark={isDark} />

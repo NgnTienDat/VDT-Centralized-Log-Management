@@ -66,7 +66,7 @@ public class TestController {
     public ResponseEntity<String> getLogError() {
         log.error(
                 "Failed to synchronize inventory data with external warehouse service",
-                new RuntimeException("External API unavailable")
+                new NullPointerException("External API unavailable")
         );
         return ResponseEntity.ok("ERROR log generated");
     }

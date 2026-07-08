@@ -114,3 +114,11 @@ export async function fetchApps() {
     const response = await axiosClient.get("/api/v1/logs/applications");
     return response.data;
 }
+
+
+export async function fetchIndexFields(value = "sys-logs-*") {
+    const response = await axiosClient.get(`/api/v1/es/group-by-fields?index=${encodeURIComponent(value)}`);
+    return response.data; // trả về mảng các field name (string[])
+}
+
+
