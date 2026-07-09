@@ -4,6 +4,8 @@ import com.vdt.log_monitor.common.dto.ApiResponse;
 import com.vdt.log_monitor.common.dto.CursorPage;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
 import com.vdt.log_monitor.common.dto.LogSearchRequest;
+import com.vdt.log_monitor.common.dto.LogSummaryDto;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -24,12 +26,10 @@ public class LogQueryController {
      * keyword, environment, appName, service, logLevel, before, size
      * /api/v1/logs?environment=prod&appName=myapp&logLevel=ERROR&before=2026-06-04T00:00:00Z&size=20&q=abc
      */
-    @GetMapping
-    public ApiResponse<CursorPage<LogMessageDto>> searchLogs(@Valid LogSearchRequest logSearchRequest) {
-//        System.out.println("Search request: " + logSearchRequest);
-        CursorPage<LogMessageDto> results = logQueryService.search(logSearchRequest);
-//        System.out.println("Search results: " + results);
-        return ApiResponse.success(results);
+
+     @GetMapping
+    public ApiResponse<CursorPage<LogSummaryDto>> searchLogs(@Valid LogSearchRequest logSearchRequest) {
+        return ApiResponse.success(logQueryService.search(logSearchRequest));
     }
 
     /**
