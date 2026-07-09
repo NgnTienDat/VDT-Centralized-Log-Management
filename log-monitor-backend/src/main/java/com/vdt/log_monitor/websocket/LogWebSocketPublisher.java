@@ -71,17 +71,12 @@ public class LogWebSocketPublisher {
     private void sendToTopic(String topic, LogMessageDto logMessageDto) {   
         try {
             messagingTemplate.convertAndSend(topic, logMessageDto);
-            log.debug("Published log [{}] [{}] to {}", logMessageDto.getLogLevel(), logMessageDto.getServiceName(),
-                    topic);
+            // log.info("Published log [{}] [{}] to {}", logMessageDto.getLogLevel(), logMessageDto.getServiceName(), topic);
 
         } catch (Exception e) {
             // Không để lỗi WS làm crash luồng ingest chính
             log.error("Failed to publish log to topic {}: {}", topic, e.getMessage());
         }
-    }
-
-    private String buildTopic(String env, String service, String level) {
-        return "/topic/logs." + env + "." + service + "." + level;
     }
 
     private String normalize(String value) {
