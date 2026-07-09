@@ -17,9 +17,23 @@ export const options = {
     }
 };
 
+const BASE_URL = 'http://47.128.219.78/api/v1/logs';
+
 export default function () {
-    http.get(
-        'http://47.128.219.78/api/v1/logs'
-        // 'http://47.128.219.78/api/v1/logs?size=50&environment=staging&appName=logs-app&serviceName=logs-service&logLevel=INFO&q=User'
-    );
+    const params = {
+        size: 50,
+        environment: 'staging',
+        appName: 'logs-app',
+        serviceName: 'logs-service',
+        logLevel: 'ERROR',
+        q: 'Payment processing failed'
+    };
+
+    const qs = Object.entries(params)
+        .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+        .join('&');
+
+    const url = `${BASE_URL}?${qs}`;
+
+    http.get(url);
 }

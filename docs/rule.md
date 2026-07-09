@@ -140,7 +140,7 @@ Không dùng wildcard nữa.
       "type": "FETCH_ES_DATA",
       "params": {
         "index": "sys-logs-*",
-        "query": "message:(\"Payment failed\" OR \"Order rollback\" OR \"Send email failed\" OR \"OTP expired\")",
+        "query": "main_message:(\"Payment failed\" OR \"Order rollback\" OR \"Send email failed\" OR \"OTP expired\")",
         "metricType": "COUNT",
         "groupBy": [
           "service"

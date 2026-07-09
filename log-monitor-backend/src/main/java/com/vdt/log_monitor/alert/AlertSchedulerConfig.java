@@ -10,7 +10,7 @@ public class AlertSchedulerConfig {
     @Bean
     public ThreadPoolTaskScheduler alertTaskScheduler() {
         ThreadPoolTaskScheduler scheduler = new ThreadPoolTaskScheduler();
-        scheduler.setPoolSize(10); // chạy 10 rule cùng lúc
+        scheduler.setPoolSize(10);
         scheduler.setThreadNamePrefix("AlertTimer-");
         scheduler.initialize();
         return scheduler;
