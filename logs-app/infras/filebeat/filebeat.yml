@@ -21,7 +21,7 @@ processors:
   - add_fields:
       target: ''
       fields:
-        environment: 'dev'
+        environment: 'staging'
         app: 'logs-app'
         service: 'logs-service'
 
