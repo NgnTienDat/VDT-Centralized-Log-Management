@@ -283,7 +283,7 @@ So sánh ngưỡng
   ],
   "notificationTemplate": {
     "title": "High Error Rate",
-    "message": "Tỷ lệ ERROR/FATAL vượt quá 5% tổng số log trong 5 phút gần nhất."
+    "message": " "
   }
 }
 ```

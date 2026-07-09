@@ -3,6 +3,7 @@ import SideBar from "./components/layout/SibeBar";
 import AppHeader from "./components/layout/AppHeader";
 import LogDashboard from "./pages/LogDashboard";
 import AlertMonitor from "./pages/AlertMonitor";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
   const [isDark, setIsDark] = useState(false);
@@ -14,6 +15,16 @@ export default function App() {
 
   return (
     <div className={`w-screen h-screen flex overflow-hidden transition-colors duration-200 ${globalThemeClass}`}>
+      <ToastContainer
+        position="bottom-right"
+        autoClose={5000}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme={isDark ? "dark" : "light"}
+      />
+
       {/* Left Fixed Navigation Menu */}
       <SideBar activeTab={activeTab} setActiveTab={setActiveTab} isDark={isDark} />
 
