@@ -68,7 +68,7 @@ public class LogWebSocketPublisher {
         sendToTopic("/topic/logs.all", log);
     }
 
-    private void sendToTopic(String topic, LogMessageDto logMessageDto) {
+    private void sendToTopic(String topic, LogMessageDto logMessageDto) {   
         try {
             messagingTemplate.convertAndSend(topic, logMessageDto);
             log.debug("Published log [{}] [{}] to {}", logMessageDto.getLogLevel(), logMessageDto.getServiceName(),

@@ -27,7 +27,7 @@ public class LogMessageDto {
     private LogLevel logLevel;        // ERROR | WARN | INFO | DEBUG
     private String environment;  // dev | staging | test | prod
     private String serviceName;      // auth-service | order-service | ...
-    private String appName;        // tên ứng dụng, có thể trùng serviceName hoặc khác nếu muốn phân tách rõ hơn
+    private String appName;        // tên ứng dụng, có thể trùng serviceName hoặc khác nếu muốn phân tách rõ hơn    /// tesst stststst
     private String hostName;
     private String logger;        // tên logger, thường là tên class (ví dụ: com.vdt.auth.AuthService)
     private String traceId;      // xuyên suốt 1 request qua nhiều service
