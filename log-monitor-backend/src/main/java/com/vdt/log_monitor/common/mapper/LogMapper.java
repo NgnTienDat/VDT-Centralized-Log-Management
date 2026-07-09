@@ -2,6 +2,7 @@ package com.vdt.log_monitor.common.mapper;
 
 import com.vdt.log_monitor.common.dto.LogIngestRequest;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
+import com.vdt.log_monitor.common.dto.LogSummaryDto;
 import com.vdt.log_monitor.common.entity.LogDocument;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -19,9 +20,19 @@ public interface LogMapper {
 
     // =========================================================================
     // 2. Map từ LogDocument -> LogMessageDto
-    // Do cấu trúc các field đã khớp hoàn toàn, MapStruct sẽ tự map mà không cần cấu hình gì thêm
+    // Do cấu trúc các field đã khớp hoàn toàn, MapStruct sẽ tự map mà không cần cấu
+    // hình gì thêm
     // =========================================================================
     LogMessageDto toDto(LogDocument document);
+
+    @Mapping(source = "id",             target = "id")
+    @Mapping(source = "docId",          target = "docId")
+    @Mapping(source = "eventTimestamp", target = "eventTimestamp")
+    @Mapping(source = "logLevel",       target = "logLevel")
+    @Mapping(source = "environment",    target = "environment")
+    @Mapping(source = "serviceName",    target = "serviceName")
+    @Mapping(source = "logMessage",     target = "logMessage")
+    LogSummaryDto toSummaryDto(LogDocument document);
 
     // =========================================================================
     // Kỹ thuật Custom Mapping Logic bằng @Named
