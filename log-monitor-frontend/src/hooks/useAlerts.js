@@ -3,8 +3,96 @@ import { Client } from "@stomp/stompjs";
 import { useFilterStore } from "../stores/useFilterStore";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createNewRule, getAllRules, getRuleById, updateRule, deleteRule } from "../api/alertApi";
+import { toast } from "react-toastify";
 
 const ALERT_RULES_QUERY_KEY = ["alertRules"];
+const ALERT_TOPIC = "/topic/alerts";
+
+let sharedClient = null;
+let sharedSubscription = null;
+let sharedWsUrl = "";
+let sharedTopic = ALERT_TOPIC;
+const sharedAlertHandlers = new Set();
+
+function ensureSharedAlertConnection(wsUrl, topic) {
+    sharedAlertHandlers.add(topic.handler);
+
+    if (sharedClient && sharedWsUrl === wsUrl && sharedTopic === topic.name) {
+        return;
+    }
+
+    if (sharedClient) {
+        if (sharedSubscription) {
+            sharedSubscription.unsubscribe();
+            sharedSubscription = null;
+        }
+        sharedClient.deactivate();
+    }
+
+    sharedWsUrl = wsUrl;
+    sharedTopic = topic.name;
+
+    sharedClient = new Client({
+        brokerURL: wsUrl,
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+
+        onConnect: () => {
+            sharedSubscription = sharedClient.subscribe(sharedTopic, (message) => {
+                try {
+                    const data = JSON.parse(message.body);
+                    for (const handler of sharedAlertHandlers) {
+                        handler(data);
+                    }
+                } catch (err) {
+                    console.error("[useAlerts] Failed to parse alert message:", err);
+                }
+            });
+        },
+
+        onStompError: (frame) => {
+            console.error("[useAlerts] STOMP error:", frame.headers["message"]);
+        },
+
+        onWebSocketError: () => {
+            console.error("[useAlerts] WebSocket connection error.");
+        },
+    });
+
+    sharedClient.activate();
+}
+
+function releaseSharedAlertHandler(handler) {
+    sharedAlertHandlers.delete(handler);
+
+    if (sharedAlertHandlers.size > 0 || !sharedClient) {
+        return;
+    }
+
+    if (sharedSubscription) {
+        sharedSubscription.unsubscribe();
+        sharedSubscription = null;
+    }
+
+    sharedClient.deactivate();
+    sharedClient = null;
+    sharedWsUrl = "";
+    sharedTopic = ALERT_TOPIC;
+}
+
+function buildAlertToastMessage(data) {
+    const heading = data?.ruleName || data?.title || "New alert received";
+    const details = data?.message || data?.scopeLabel || (data?.triggered ? "Triggered" : "Updated");
+
+    return details ? `${heading} • ${details}` : heading;
+}
+
+function buildToastId(data) {
+    return [data?.ruleId, data?.timestamp, data?.alertState, data?.title, data?.message]
+        .filter(Boolean)
+        .join("::") || "alert-toast";
+}
 
 /**
  * Signature: export function useAlerts(onAlert?)
@@ -25,7 +113,6 @@ export function useAlerts(onAlert = () => { }) {
         onAlertRef.current(data);
     }, []);
 
-    // ── WebSocket: nhận alert real-time qua STOMP topic /topic/alerts ──────────
     useEffect(() => {
         const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -38,44 +125,33 @@ export function useAlerts(onAlert = () => { }) {
             wsUrl = `${protocol}//${host}/ws`;
         }
 
-        let topic = "/topic/alerts";
+        const alertHandler = (data) => {
+            const toastMessage = buildAlertToastMessage(data);
+            const toastId = buildToastId(data);
+            const toastOptions = {
+                position: "bottom-right",
+                autoClose: false,
+                closeButton: true,
+                closeOnClick: false,
+                draggable: false,
+                pauseOnHover: true,
+                toastId,
+            };
 
-        let subscription = null;
+            if (data?.alertState === "FIRING" || data?.triggered) {
+                toast.warning(toastMessage, toastOptions);
+            } else {
+                toast.info(toastMessage, toastOptions);
+            }
 
-        const client = new Client({
-            brokerURL: wsUrl,
-            reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
+            handleAlert(data);
+            console.log("[useAlerts] Received alert:", data);
+        };
 
-            onConnect: () => {
-                subscription = client.subscribe(topic, (message) => {
-                    try {
-                        const data = JSON.parse(message.body);
-                        handleAlert(data);
-                        console.log("[useAlerts] Received alert:", data);
-                    } catch (err) {
-                        console.error("[useAlerts] Failed to parse alert message:", err);
-                    }
-                });
-            },
-
-            onStompError: (frame) => {
-                console.error("[useAlerts] STOMP error:", frame.headers["message"]);
-            },
-
-            onWebSocketError: () => {
-                console.error("[useAlerts] WebSocket connection error.");
-            },
-        });
-
-        client.activate();
+        ensureSharedAlertConnection(wsUrl, { name: ALERT_TOPIC, handler: alertHandler });
 
         return () => {
-            if (subscription) {
-                subscription.unsubscribe();
-            }
-            client.deactivate();
+            releaseSharedAlertHandler(alertHandler);
         };
     }, [handleAlert]);
 

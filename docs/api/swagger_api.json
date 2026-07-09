@@ -1,0 +1,804 @@
+{
+    "openapi": "3.1.0",
+    "info": {
+        "title": "OpenAPI definition",
+        "version": "v0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8082",
+            "description": "Generated server url"
+        }
+    ],
+    "paths": {
+        "/internal/logs/ingest": {
+            "post": {
+                "tags": [
+                    "log-collector-controller"
+                ],
+                "operationId": "ingest",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/LogIngestRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                }
+            }
+        },
+        "/api/v1/alerts/rules": {
+            "get": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "getAllRules",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListRuleConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "createRule",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/RuleConfig"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseRuleConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/alerts/rules/{ruleId}": {
+            "get": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "getRuleById",
+                "parameters": [
+                    {
+                        "name": "ruleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseRuleConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "deleteRule",
+                "parameters": [
+                    {
+                        "name": "ruleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseVoid"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "patchRule",
+                "parameters": [
+                    {
+                        "name": "ruleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/UpdateRuleRequest"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseRuleConfig"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logs": {
+            "get": {
+                "tags": [
+                    "log-query-controller"
+                ],
+                "operationId": "searchLogs",
+                "parameters": [
+                    {
+                        "name": "logSearchRequest",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/components/schemas/LogSearchRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseCursorPageLogMessageDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logs/{id}": {
+            "get": {
+                "tags": [
+                    "log-query-controller"
+                ],
+                "operationId": "getLogById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "by",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "id"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseLogMessageDto"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logs/services": {
+            "get": {
+                "tags": [
+                    "log-query-controller"
+                ],
+                "operationId": "getServices",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/logs/applications": {
+            "get": {
+                "tags": [
+                    "log-query-controller"
+                ],
+                "operationId": "getApplications",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/es/group-by-fields": {
+            "get": {
+                "tags": [
+                    "elasticsearch-metadata-controller"
+                ],
+                "operationId": "getGroupByFields",
+                "parameters": [
+                    {
+                        "name": "index",
+                        "in": "query",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "default": "sys-logs-*"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListString"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/alerts/rules/{ruleId}/notifications": {
+            "get": {
+                "tags": [
+                    "alert-rule-controller"
+                ],
+                "operationId": "getNotificationsByRule",
+                "parameters": [
+                    {
+                        "name": "ruleId",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "content": {
+                            "*/*": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ApiResponseListAlertNotificationDocument"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "LogIngestRequest": {
+                "type": "object",
+                "properties": {
+                    "docId": {
+                        "type": "string"
+                    },
+                    "traceId": {
+                        "type": "string"
+                    },
+                    "logLevel": {
+                        "type": "string",
+                        "enum": [
+                            "DEBUG",
+                            "INFO",
+                            "WARN",
+                            "ERROR"
+                        ]
+                    },
+                    "environment": {
+                        "type": "string"
+                    },
+                    "serviceName": {
+                        "type": "string"
+                    },
+                    "appName": {
+                        "type": "string"
+                    },
+                    "thread": {
+                        "type": "string"
+                    },
+                    "logger": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "eventTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "hostName": {
+                        "type": "string"
+                    }
+                }
+            },
+            "NotificationTemplate": {
+                "type": "object",
+                "properties": {
+                    "title": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            },
+            "PipelineStep": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string"
+                    },
+                    "params": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "object"
+                        }
+                    }
+                }
+            },
+            "RuleConfig": {
+                "type": "object",
+                "properties": {
+                    "ruleId": {
+                        "type": "string"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "intervalMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "lastRunTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "alertState": {
+                        "type": "string",
+                        "enum": [
+                            "OK",
+                            "FIRING"
+                        ]
+                    },
+                    "lastNotifiedTime": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "repeatIntervalMinutes": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "lastNotifiedBreachedGroups": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "triggerStepId": {
+                        "type": "string"
+                    },
+                    "pipelineSteps": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PipelineStep"
+                        }
+                    },
+                    "notificationTemplate": {
+                        "$ref": "#/components/schemas/NotificationTemplate"
+                    }
+                }
+            },
+            "ApiResponseRuleConfig": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/RuleConfig"
+                    }
+                }
+            },
+            "UpdateRuleRequest": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "maxLength": 255,
+                        "minLength": 1
+                    },
+                    "intervalMinutes": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 10080,
+                        "minimum": 1
+                    },
+                    "isActive": {
+                        "type": "boolean"
+                    },
+                    "repeatIntervalMinutes": {
+                        "type": "integer",
+                        "format": "int32",
+                        "maximum": 10080,
+                        "minimum": 1
+                    },
+                    "triggerStepId": {
+                        "type": "string"
+                    },
+                    "pipelineSteps": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/PipelineStep"
+                        }
+                    },
+                    "notificationTemplate": {
+                        "$ref": "#/components/schemas/NotificationTemplate"
+                    }
+                }
+            },
+            "LogSearchRequest": {
+                "type": "object",
+                "properties": {
+                    "environment": {
+                        "type": "string"
+                    },
+                    "appName": {
+                        "type": "string"
+                    },
+                    "serviceName": {
+                        "type": "string"
+                    },
+                    "logLevel": {
+                        "type": "string",
+                        "enum": [
+                            "DEBUG",
+                            "INFO",
+                            "WARN",
+                            "ERROR"
+                        ]
+                    },
+                    "q": {
+                        "type": "string"
+                    },
+                    "before": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "beforeId": {
+                        "type": "string"
+                    },
+                    "size": {
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                }
+            },
+            "ApiResponseCursorPageLogMessageDto": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/CursorPageLogMessageDto"
+                    }
+                }
+            },
+            "CursorPageLogMessageDto": {
+                "type": "object",
+                "properties": {
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/LogMessageDto"
+                        }
+                    },
+                    "hasMore": {
+                        "type": "boolean"
+                    },
+                    "nextCursor": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "nextCursorId": {
+                        "type": "string"
+                    }
+                }
+            },
+            "LogMessageDto": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "docId": {
+                        "type": "string"
+                    },
+                    "eventTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "logLevel": {
+                        "type": "string",
+                        "enum": [
+                            "DEBUG",
+                            "INFO",
+                            "WARN",
+                            "ERROR"
+                        ]
+                    },
+                    "environment": {
+                        "type": "string"
+                    },
+                    "serviceName": {
+                        "type": "string"
+                    },
+                    "appName": {
+                        "type": "string"
+                    },
+                    "hostName": {
+                        "type": "string"
+                    },
+                    "logger": {
+                        "type": "string"
+                    },
+                    "traceId": {
+                        "type": "string"
+                    },
+                    "thread": {
+                        "type": "string"
+                    },
+                    "logMessage": {
+                        "type": "string"
+                    },
+                    "sentTimestamp": {
+                        "type": "string",
+                        "format": "date-time"
+                    },
+                    "durationMs": {
+                        "type": "integer",
+                        "format": "int64"
+                    },
+                    "stackTrace": {
+                        "type": "string"
+                    }
+                }
+            },
+            "ApiResponseLogMessageDto": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "$ref": "#/components/schemas/LogMessageDto"
+                    }
+                }
+            },
+            "ApiResponseListString": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                }
+            },
+            "ApiResponseListRuleConfig": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/RuleConfig"
+                        }
+                    }
+                }
+            },
+            "AlertNotificationDocument": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    },
+                    "ruleId": {
+                        "type": "string"
+                    },
+                    "ruleName": {
+                        "type": "string"
+                    },
+                    "triggerStepId": {
+                        "type": "string"
+                    },
+                    "alertState": {
+                        "type": "string"
+                    },
+                    "triggered": {
+                        "type": "boolean"
+                    },
+                    "breachedGroups": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "breachedGroupValues": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "number",
+                            "format": "double"
+                        }
+                    },
+                    "groupByFields": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "timestamp": {
+                        "type": "integer",
+                        "format": "int64"
+                    }
+                }
+            },
+            "ApiResponseListAlertNotificationDocument": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/AlertNotificationDocument"
+                        }
+                    }
+                }
+            },
+            "ApiResponseVoid": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "type": "integer",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    },
+                    "data": {
+                        "type": "object"
+                    }
+                }
+            }
+        }
+    }
+}
