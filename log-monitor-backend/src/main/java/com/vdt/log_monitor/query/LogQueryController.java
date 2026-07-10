@@ -28,7 +28,7 @@ public class LogQueryController {
      */
 
      @GetMapping
-    public ApiResponse<CursorPage<LogSummaryDto>> searchLogs(@Valid LogSearchRequest logSearchRequest) {
+    public ApiResponse<CursorPage<LogMessageDto>> searchLogs(@Valid LogSearchRequest logSearchRequest) {
         return ApiResponse.success(logQueryService.search(logSearchRequest));
     }
 

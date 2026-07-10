@@ -3,11 +3,14 @@ package com.vdt.log_monitor.query;
 import co.elastic.clients.elasticsearch._types.SortOrder;
 import co.elastic.clients.elasticsearch._types.aggregations.Aggregation;
 import co.elastic.clients.elasticsearch._types.query_dsl.BoolQuery;
+
 import com.vdt.log_monitor.common.dto.CursorPage;
 import com.vdt.log_monitor.common.dto.LogMessageDto;
 import com.vdt.log_monitor.common.dto.LogSearchRequest;
-import com.vdt.log_monitor.common.dto.LogSummaryDto;
 import com.vdt.log_monitor.common.entity.LogDocument;
+
+import java.time.Instant;
+
 import com.vdt.log_monitor.common.exception.AppException;
 import com.vdt.log_monitor.common.exception.ErrorCode;
 import com.vdt.log_monitor.common.mapper.LogMapper;
@@ -23,7 +26,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
-import java.time.Instant;
 import java.util.List;
 
 @Slf4j
@@ -35,18 +37,8 @@ public class LogQueryService {
         private final LogSearchRepository logSearchRepository;
         private final LogMapper logMapper;
 
-        /**
-         * Search log với cursor-based pagination.
-         *
-         * Return type thay đổi: CursorPage<LogMessageDto> → CursorPage<LogSummaryDto>
-         *
-         * Lý do: list view chỉ cần 6 field (id, docId, eventTimestamp, logLevel,
-         * environment, serviceName, logMessage). Trả LogMessageDto đầy đủ 14 field
-         * là thừa, tốn bandwidth và tạo kỳ vọng sai cho client rằng mọi field đều có.
-         *
-         * Detail đầy đủ → findById() / findByDocId() vẫn trả LogMessageDto.
-         */
-        public CursorPage<LogSummaryDto> search(LogSearchRequest request) {
+        public CursorPage<LogMessageDto> search(LogSearchRequest request) {
+
                 int limit = request.getSize() != null ? request.getSize() : 20;
 
                 var boolQueryBuilder = new BoolQuery.Builder();
@@ -79,23 +71,28 @@ public class LogQueryService {
                                         .minimumShouldMatch("1")));
                 }
 
+                // Dùng search_after thay vì range filter cho cursor
                 List<Object> searchAfter = null;
+
+                // Chỉ kích hoạt search_after từ trang 2 trở đi khi có ĐỦ cả timestamp và ID
+                // tie-break
                 if (request.getBefore() != null && StringUtils.hasText(request.getBeforeId())) {
                         searchAfter = List.of(
                                         request.getBefore().toEpochMilli(),
-                                        request.getBeforeId());
+                                        request.getBeforeId() // beforeId giờ là docId (keyword), không phải _shard_doc
+                        );
                 }
 
+                // Sort đúng: @timestamp DESC + doc_id DESC (field thường, có doc_values)
                 NativeQuery query = NativeQuery.builder()
                                 .withQuery(q -> q.bool(boolQueryBuilder.build()))
                                 .withSourceFilter(new FetchSourceFilter(null, null, new String[] { "stack_trace" }))
-                                // .withSourceFilter(new FetchSourceFilter(
-                                //                 null, // includes: null = lấy tất cả field
-                                //                 new String[] { "stack_trace" }, // excludes: chỉ bỏ field nặng nhất
-                                //                 null // sourceExcludes: không cần
-                                // ))
-                                .withSort(s -> s.field(f -> f.field("@timestamp").order(SortOrder.Desc)))
-                                .withSort(s -> s.field(f -> f.field("doc_id").order(SortOrder.Desc)))
+                                .withSort(s -> s.field(f -> f
+                                                .field("@timestamp")
+                                                .order(SortOrder.Desc)))
+                                .withSort(s -> s.field(f -> f
+                                                .field("doc_id")
+                                                .order(SortOrder.Desc)))
                                 .withSearchAfter(searchAfter)
                                 .withPageable(PageRequest.of(0, limit + 1))
                                 .build();
@@ -107,20 +104,23 @@ public class LogQueryService {
 
                 boolean hasMore = allHits.size() > limit;
 
-                // Map sang LogSummaryDto thay vì LogMessageDto
-                List<LogSummaryDto> data = allHits
-                                .subList(0, Math.min(allHits.size(), limit))
-                                .stream()
-                                .map(logMapper::toSummaryDto)
+                // 🌟 BƯỚC CẢI TIẾN: Dùng Stream map qua LogMapper.toDto luôn.
+                // Việc dùng .stream().map(...).toList() sẽ tự động tạo ra một List mới hoàn
+                // toàn,
+                // giải quyết triệt để vấn đề giữ vùng nhớ (Memory Leak) của subList mà không
+                // cần bọc new ArrayList<>().
+                List<LogMessageDto> data = allHits.subList(0, Math.min(allHits.size(), limit)).stream()
+                                .map(logMapper::toDto)
                                 .toList();
 
+                // --- Lấy thông tin Cursor từ danh sách DTO cuối cùng ---
                 Instant nextCursorTs = data.isEmpty() ? null
                                 : data.get(data.size() - 1).getEventTimestamp();
 
                 String nextCursorId = data.isEmpty() ? null
                                 : data.get(data.size() - 1).getDocId();
 
-                return CursorPage.<LogSummaryDto>builder()
+                return CursorPage.<LogMessageDto>builder()
                                 .data(data)
                                 .hasMore(hasMore)
                                 .nextCursor(nextCursorTs)
@@ -128,7 +128,6 @@ public class LogQueryService {
                                 .build();
         }
 
-        /** Full detail — dùng khi user click vào row trong UI */
         public LogMessageDto findById(String id) {
                 return logMapper.toDto(logSearchRepository.findById(id)
                                 .orElseThrow(() -> new AppException(ErrorCode.LOG_NOT_FOUND)));
@@ -140,13 +139,19 @@ public class LogQueryService {
         }
 
         public List<String> getUniqueServicesOrApps(String fieldName) {
+
                 NativeQuery query = NativeQuery.builder()
                                 .withMaxResults(0)
-                                .withAggregation("results",
-                                                Aggregation.of(a -> a.terms(t -> t.field(fieldName).size(100))))
+                                .withAggregation(
+                                                "results",
+                                                Aggregation.of(a -> a
+                                                                .terms(t -> t
+                                                                                .field(fieldName)
+                                                                                .size(100))))
                                 .build();
 
                 SearchHits<LogDocument> searchHits = logSearchRepository.search(query);
+
                 ElasticsearchAggregations aggregations = (ElasticsearchAggregations) searchHits.getAggregations();
 
                 return aggregations.get("results")
