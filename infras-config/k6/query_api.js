@@ -23,7 +23,7 @@ const BASE_URL = 'http://47.128.219.78/api/v1/logs';
 
 export default function () {
     const params = {
-        size: 50,
+        size: 20,
         environment: 'staging',
         appName: 'logs-app',
         serviceName: 'logs-service',
