@@ -12,7 +12,13 @@ const STATE_BADGE = {
 export default function AlertMonitor({ isDark }) {
     const [showNewRule, setShowNewRule] = useState(false);
     const [selectedRuleId, setSelectedRuleId] = useState(null); // Quản lý ID rule đang chọn xem chi tiết
-    const { fields: esIndexFields, isLoadingFields, isFieldsError } = useEsIndexFilelds();
+    const { 
+        fields: esIndexFields, 
+        isLoadingFields, 
+        isFieldsError, 
+        numericFields,
+        isLoadingNumericFields,
+        isNumericFieldsError } = useEsIndexFilelds();
 
     const {
         rules,
@@ -95,6 +101,9 @@ export default function AlertMonitor({ isDark }) {
                                 groupByFields={esIndexFields}
                                 isLoadingGroupByFields={isLoadingFields}
                                 groupByFieldsError={isFieldsError}
+                                numericFields={numericFields}
+                                isLoadingNumericFields={isLoadingNumericFields}
+                                numericFieldsError={isNumericFieldsError}
                             />
                         </div>
                     )}
