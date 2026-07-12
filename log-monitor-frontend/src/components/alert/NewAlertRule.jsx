@@ -40,8 +40,18 @@ const createFetchStep = (id) => ({
 const createMathStep = (id) => ({ id, type: "MATH", inputs: [], expression: "" });
 const createThresholdStep = (id) => ({ id, type: "EVALUATE_THRESHOLD", inputStepId: "", operator: "GREATER_THAN", value: "" });
 
-export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit, groupByFields = [], isLoadingGroupByFields = false, groupByFieldsError = false }) {
-    // Call both mutate functions from useAlerts hook
+export default function NewAlertRule({
+    isDark,
+    onClose,
+    onCreated,
+    ruleToEdit,
+    groupByFields = [],
+    isLoadingGroupByFields = false,
+    groupByFieldsError = false,
+    numericFields = [],
+    isLoadingNumericFields = false,
+    numericFieldsError = false }) {
+
     const { createRuleAsync, updateRuleAsync, isCreatingRule, createRuleError } = useAlerts();
 
     const idCounterRef = useRef(1);
@@ -317,6 +327,9 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit, g
                                 groupByOptions={groupByOptions}
                                 isLoadingGroupByFields={isLoadingGroupByFields}
                                 groupByFieldsError={groupByFieldsError}
+                                numericFields={numericFields}
+                                isLoadingNumericFields={isLoadingNumericFields}
+                                numericFieldsError={numericFieldsError}
                             />
                         );
                     })}
@@ -349,6 +362,9 @@ export default function NewAlertRule({ isDark, onClose, onCreated, ruleToEdit, g
                                         groupByOptions={groupByOptions}
                                         isLoadingGroupByFields={isLoadingGroupByFields}
                                         groupByFieldsError={groupByFieldsError}
+                                        numericFields={numericFields}
+                                        isLoadingNumericFields={isLoadingNumericFields}
+                                        numericFieldsError={numericFieldsError}
                                     />
                                 );
                             })}
@@ -443,6 +459,9 @@ function PipelineStepBlock({
     groupByOptions = GROUP_BY_OPTIONS,
     isLoadingGroupByFields = false,
     groupByFieldsError = false,
+    numericFields = [],
+    isLoadingNumericFields = false,
+    numericFieldsError = false,
 }) {
     const blockCls = isDark ? "bg-white/3 border-white/8" : "bg-slate-50 border-slate-300 shadow-xs";
     const inputCls = isDark
@@ -521,12 +540,30 @@ function PipelineStepBlock({
                         {step.metricType !== "COUNT" && (
                             <div>
                                 <label className={labelCls}>Metric Field</label>
-                                <input
-                                    className={`w-40 rounded-lg border px-3 py-2 text-sm ${inputCls}`}
-                                    placeholder="e.g., response_time_ms"
+                                <select
+                                    className={`w-44 rounded-lg border px-3 py-2 text-sm ${inputCls}`}
                                     value={step.metricField}
                                     onChange={(e) => onChange({ metricField: e.target.value })}
-                                />
+                                    disabled={isLoadingNumericFields || numericFieldsError}
+                                >
+                                    {isLoadingNumericFields ? (
+                                        <option value="">Loading fields...</option>
+                                    ) : numericFieldsError ? (
+                                        <option value="">Error loading fields</option>
+                                    ) : numericFields.length === 0 ? (
+                                        // Trường hợp kết quả trả về [] rỗng, hiển thị none
+                                        <option value="">none</option>
+                                    ) : (
+                                        <>
+                                            <option value="">— Select field —</option>
+                                            {numericFields.map((field) => (
+                                                <option key={field} value={field}>
+                                                    {field}
+                                                </option>
+                                            ))}
+                                        </>
+                                    )}
+                                </select>
                             </div>
                         )}
                     </div>

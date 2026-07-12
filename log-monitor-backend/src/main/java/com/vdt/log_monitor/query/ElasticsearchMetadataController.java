@@ -1,6 +1,5 @@
 package com.vdt.log_monitor.query;
 
-
 import com.vdt.log_monitor.common.dto.ApiResponse;
 import lombok.RequiredArgsConstructor;
 
@@ -23,12 +22,16 @@ public class ElasticsearchMetadataController {
 
     @GetMapping("/group-by-fields")
     public ApiResponse<List<String>> getGroupByFields(
-            @RequestParam(defaultValue = "sys-logs-*") String index
-    ) throws IOException {
+            @RequestParam(defaultValue = "sys-logs-*") String index) throws IOException {
 
-        return ApiResponse.<List<String>>builder()
-                .data(metadataService.getGroupByFields(index))
-                .build();
+        return ApiResponse.success(metadataService.getGroupByFields(index));
+    }
+
+    @GetMapping("/numeric-fields")
+    public ApiResponse<List<String>> getNumericFields(
+            @RequestParam(defaultValue = "sys-logs-*") String index) throws IOException {
+
+        return ApiResponse.success(metadataService.getNumericFields(index));
     }
 
 }

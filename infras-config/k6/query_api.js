@@ -1,8 +1,9 @@
 import http from 'k6/http';
+import { sleep } from 'k6';
 
 export const options = {
     vus: 20,
-    duration: '30s',
+    duration: '3m',
 
     thresholds: {
         http_req_duration: [
@@ -17,8 +18,8 @@ export const options = {
     }
 };
 
-const BASE_URL = 'http://localhost:8082/api/v1/logs';
-// const BASE_URL = 'http://47.128.219.78/api/v1/logs';
+// const BASE_URL = 'http://localhost:8082/api/v1/logs';
+const BASE_URL = 'http://47.128.219.78/api/v1/logs';
 
 export default function () {
     const params = {
@@ -37,4 +38,5 @@ export default function () {
     const url = `${BASE_URL}?${qs}`;
 
     http.get(url);
+    sleep(0.1);
 }

@@ -25,8 +25,21 @@ public class ElasticsearchMetadataService {
             "_index_mode",
             "_tier",
             "host.name",
+            "tags",
             "@timestamp",
+            "_doc_count",
             "doc_id");
+
+    private static final Set<String> NUMERIC_TYPES = Set.of(
+            "byte",
+            "short",
+            "integer",
+            "long",
+            "unsigned_long",
+            "half_float",
+            "float",
+            "double",
+            "scaled_float");
 
     public List<String> getGroupByFields(String index) throws IOException {
 
@@ -59,4 +72,30 @@ public class ElasticsearchMetadataService {
         return new ArrayList<>(fields);
     }
 
+    public List<String> getNumericFields(String index) throws IOException {
+
+        FieldCapsResponse response = elasticsearchClient.fieldCaps(fc -> fc
+                .index(index)
+                .fields("*"));
+
+        Set<String> fields = new TreeSet<>();
+
+        response.fields().forEach((fieldName, types) -> {
+
+            if (BLACKLIST.contains(fieldName)) {
+                return;
+            }
+
+            boolean numeric = types.keySet().stream()
+                    .anyMatch(NUMERIC_TYPES::contains);
+
+            if (!numeric) {
+                return;
+            }
+
+            fields.add(fieldName);
+        });
+
+        return new ArrayList<>(fields);
+    }
 }

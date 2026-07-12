@@ -122,3 +122,8 @@ export async function fetchIndexFields(value = "sys-logs-*") {
 }
 
 
+// Thêm hàm này vào cuối file logApi.js hoặc cùng nhóm với fetchIndexFields
+export async function fetchNumericFields(value = "sys-logs-*") {
+    const response = await axiosClient.get(`/api/v1/es/numeric-fields?index=${encodeURIComponent(value)}`);
+    return response.data; // trả về mảng các numeric field name (string[])
+}
