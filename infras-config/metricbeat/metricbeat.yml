@@ -1,0 +1,12 @@
+metricbeat.modules:
+    - module: logstash
+      metricsets: ["node", "node_stats"]
+      period: 5s
+      hosts: ["http://log-monitor-logstash:9600"]
+      xpack.enabled: true
+
+output.elasticsearch:
+    hosts: ["http://log-monitor-elasticsearch:9200"]
+
+setup.kibana:
+    host: "http://log-monitor-kibana:5601"

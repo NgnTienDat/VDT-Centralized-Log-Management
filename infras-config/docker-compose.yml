@@ -1,13 +1,11 @@
-# =============================================================
-# Ví dụ docker-compose.yml tích hợp sẵn ES init
-# Service "es-init" chạy script một lần rồi tự thoát.
-# Logstash chỉ start SAU KHI es-init hoàn thành thành công.
-# =============================================================
-
 networks:
   log-monitor-network:
     name: log-monitor-network
     driver: bridge
+
+volumes:
+  es-data:
+  grafana-data:
 
 services:
   elasticsearch:
@@ -17,6 +15,7 @@ services:
       - discovery.type=single-node
       - xpack.security.enabled=false
       - ES_JAVA_OPTS=-Xms512m -Xmx512m
+      - xpack.monitoring.collection.enabled=true
     volumes:
       - es-data:/usr/share/elasticsearch/data
     ports:
@@ -27,61 +26,85 @@ services:
       test:
         [
           "CMD-SHELL",
-          'curl -s http://localhost:9200/_cluster/health | grep -qE ''"status":"(green|yellow)"''',
+          'curl -s http://localhost:9200/_cluster/health | grep -qE ''"status\":\"(green|yellow)\"''',
         ]
       interval: 10s
       timeout: 5s
       retries: 10
 
-  # Service này chạy init-es.sh rồi tự exit — không restart
   es-init:
     image: curlimages/curl:latest
     container_name: log-monitor-es-init
     depends_on:
       elasticsearch:
-        condition: service_healthy # chờ ES healthy mới chạy
+        condition: service_healthy
     volumes:
-      - ./elasticsearch:/config:ro # mount toàn bộ thư mục elasticsearch/
+      - ./elasticsearch:/config:ro
     networks:
       - log-monitor-network
-    # Chạy script init, truyền URL nội bộ của ES trong docker network
     entrypoint:
       [
         "/bin/sh",
         "/config/config/init-es.sh",
         "http://log-monitor-elasticsearch:9200",
       ]
-    restart: "no" # quan trọng: không restart sau khi exit
+    restart: "no"
 
   logstash:
     image: docker.elastic.co/logstash/logstash:9.2.8
     container_name: log-monitor-logstash
     depends_on:
       es-init:
-        condition: service_completed_successfully # chờ init xong mới start
+        condition: service_completed_successfully
     volumes:
       - ./logstash:/usr/share/logstash/pipeline:ro
     environment:
-      - LS_JAVA_OPTS=-Xms256m -Xmx256m
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
     networks:
       - log-monitor-network
     ports:
       - "5044:5044"
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-  
+      - "9600:9600"
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.8
+    container_name: log-monitor-kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://log-monitor-elasticsearch:9200
+      - XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY=something_random_secure_key_must_be_at_least_32_characters
+      - XPACK_REPORTING_ENCRYPTIONKEY=another_random_secure_key_must_be_at_least_32_characters
+      - XPACK_SECURITY_ENCRYPTIONKEY=yet_another_random_secure_key_must_be_at_least_32_characters
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+    networks:
+      - log-monitor-network
+
   grafana:
-    image: grafana/grafana-oss:latest
-    container_name: grafana
+    image: grafana/grafana:latest
+    container_name: log-monitor-grafana
     ports:
       - "3000:3000"
     volumes:
-      - grafana-storage:/var/lib/grafana
+      - grafana-data:/var/lib/grafana
     networks:
       - log-monitor-network
-    depends_on:
-      - elasticsearch
+    restart: unless-stopped
 
-volumes:
-  es-data:
-  grafana-storage:
+  metricbeat:
+    image: docker.elastic.co/beats/metricbeat:9.2.8
+    container_name: log-monitor-metricbeat
+    user: root
+    volumes:
+      - ./metricbeat/metricbeat.yml:/usr/share/metricbeat/metricbeat.yml:ro
+    command: ["--strict.perms=false"]
+    depends_on:
+      elasticsearch:
+        condition: service_healthy
+      logstash:
+        condition: service_started
+    networks:
+      - log-monitor-network
+    restart: unless-stopped

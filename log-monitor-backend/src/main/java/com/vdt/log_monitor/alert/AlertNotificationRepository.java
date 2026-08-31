@@ -9,4 +9,4 @@ import java.util.List;
 @Repository
 public interface AlertNotificationRepository extends ElasticsearchRepository<AlertNotificationDocument, String> {
     List<AlertNotificationDocument> findByRuleIdOrderByTimestampDesc(String ruleId);
-}
+} 

@@ -35,6 +35,6 @@ processors:
 # Đích đến: Logstash chạy trong cùng docker network
 output.logstash:
   # Cùng network khác compose thì gọi bằng container_name
-  hosts: ["47.128.219.78:5044"] # Gọi sang container logstash chung mạng mạng docker
+  hosts: ["13.250.8.30:5044"] # Gọi sang container logstash chung mạng mạng docker
   # BỔ SUNG: Gom log gửi đi sau tối đa 1 giây nếu không đủ số lượng (bulk_max_size)
   flush.timeout: 1s

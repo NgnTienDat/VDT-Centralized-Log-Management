@@ -69,4 +69,15 @@ public class LogGeneratorService {
                     ex);
         }
     }
+
+    public void generate2Nlogs(int n) {
+
+        for (int i = 0; i < n; i++) {
+            log.info("Scheduled report generated successfully for sales department");
+
+            log.error(
+                    "Failed to synchronize inventory data with external warehouse service",
+                    new NullPointerException("External API unavailable"));
+        }
+    }
 }

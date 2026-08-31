@@ -42,19 +42,25 @@
 //    }
 //}
 
-
 package com.dev.logsapp;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/test")
 @Slf4j
 public class TestController {
+
+    private final LogGeneratorService logGeneratorService;
+
+    public TestController(LogGeneratorService logGeneratorService) {
+        this.logGeneratorService = logGeneratorService;
+    }
 
     @GetMapping("/info")
     public ResponseEntity<String> getLogInfo() {
@@ -66,8 +72,7 @@ public class TestController {
     public ResponseEntity<String> getLogError() {
         log.error(
                 "Failed to synchronize inventory data with external warehouse service",
-                new NullPointerException("External API unavailable")
-        );
+                new NullPointerException("External API unavailable"));
         return ResponseEntity.ok("ERROR log generated");
     }
 
@@ -85,8 +90,35 @@ public class TestController {
 
     @GetMapping("/all")
     public ResponseEntity<String> getLogAll() {
-        log.info("New customer account registered with email verification completed");
-        log.error("Message queue consumer failed to process event after 3 retry attempts");
+        for (int i = 0; i < 500; i++) {
+            log.info("Scheduled report generated successfully for sales department");
+
+            log.error(
+                    "Failed to synchronize inventory data with external warehouse service",
+                    new NullPointerException("External API unavailable"));
+        }
         return ResponseEntity.ok("All log levels generated");
+    }
+
+    @GetMapping("/test-load")
+    public ResponseEntity<String> testLoad(@RequestParam(defaultValue = "100") int ratePerSecond,
+            @RequestParam(defaultValue = "60") int durationSeconds) {
+        long endTime = System.currentTimeMillis() + (durationSeconds * 1000L);
+        int delayMs = 1000 / ratePerSecond;
+
+        new Thread(() -> {
+            while (System.currentTimeMillis() < endTime) {
+                log.info("Scheduled report generated successfully for sales department");
+                log.error("Failed to synchronize inventory data with external warehouse service",
+                        new NullPointerException("External API unavailable"));
+                try {
+                    Thread.sleep(delayMs);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
+        }).start();
+
+        return ResponseEntity.ok("Started loading test: " + ratePerSecond + " logs/sec for " + durationSeconds + "s");
     }
 }

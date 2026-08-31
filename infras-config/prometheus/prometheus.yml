@@ -1,0 +1,12 @@
+global:
+  scrape_interval: 5s  # Định kỳ mỗi 5 giây Prometheus sẽ đi kéo metrics một lần
+
+scrape_configs:
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name: 'logstash'
+    static_configs:
+      # log-monitor-logstash-exporter là tên container của Exporter trong mạng Docker
+      - targets: ['log-monitor-logstash-exporter:9198']

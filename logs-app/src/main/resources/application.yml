@@ -1,3 +1,6 @@
 logging:
   file:
     name: ./logs/logs-app.log
+
+  # level:
+  #   root: OFF
