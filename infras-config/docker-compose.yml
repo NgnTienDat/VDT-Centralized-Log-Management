@@ -56,9 +56,9 @@ services:
   logstash:
     image: docker.elastic.co/logstash/logstash:9.2.8
     container_name: log-monitor-logstash
-    depends_on:
-      es-init:
-        condition: service_completed_successfully # chờ init xong mới start
+    # depends_on:
+    #   es-init:
+    #     condition: service_completed_successfully # chờ init xong mới start
     volumes:
       - ./logstash:/usr/share/logstash/pipeline:ro
     environment:
@@ -69,19 +69,19 @@ services:
       - "5044:5044"
     extra_hosts:
       - "host.docker.internal:host-gateway"
-  
-  grafana:
-    image: grafana/grafana-oss:latest
-    container_name: grafana
-    ports:
-      - "3000:3000"
-    volumes:
-      - grafana-storage:/var/lib/grafana
-    networks:
-      - log-monitor-network
-    depends_on:
-      - elasticsearch
+
+  # grafana:
+  #   image: grafana/grafana-oss:latest
+  #   container_name: grafana
+  #   ports:
+  #     - "3000:3000"
+  #   volumes:
+  #     - grafana-storage:/var/lib/grafana
+  #   networks:
+  #     - log-monitor-network
+  #   depends_on:
+  #     - elasticsearch
 
 volumes:
   es-data:
-  grafana-storage:
+  # grafana-storage:
