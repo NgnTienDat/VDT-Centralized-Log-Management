@@ -22,6 +22,7 @@ services:
     environment:
       # Đường dẫn log bên trong container; phải khớp với logback-spring.xml
       - LOGS_DIR=/app/logs
+      - LOGGING_FILE_NAME=/app/logs/system.log
       - SPRING_PROFILES_ACTIVE=staging
     volumes:
       # Chia sẻ thư mục log với Filebeat

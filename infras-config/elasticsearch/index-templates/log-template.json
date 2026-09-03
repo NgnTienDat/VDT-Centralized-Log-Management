@@ -6,8 +6,7 @@
     "settings": {
       "number_of_shards": 1,
       "number_of_replicas": 0,
-      "index.lifecycle.name": "logs-ilm-policy",
-      "index.lifecycle.rollover_alias": "sys-logs"
+      "index.lifecycle.name": "logs-ilm-policy"
     },
     "mappings": {
       "properties": {
@@ -41,7 +40,7 @@
         "logger": {
           "type": "keyword"
         },
-        "message": {
+        "main_message": {
           "type": "text",
           "analyzer": "standard"
         },
